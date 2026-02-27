@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bill Management — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f8f9fa;
+    --surface: #ffffff;
+    --surface2: #f5f6f8;
+    --border: #e1e4e8;
+    --accent: #5b7cff;
+    --accent2: #4a68ff;
+    --accent-dim: #7a8e1e;
+    --text: #1f2937;
+    --text-dim: #6b7280;
+    --red: #ff4757;
+    --green: #2ed573;
+    --orange: #e0943a;
+    --blue: #4ab8d4;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'IBM Plex Sans',sans-serif; min-height:100vh; }
+  .noise { position:fixed; inset:0; pointer-events:none; z-index:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); opacity:0.4; }
+  .app { position:relative; z-index:1; max-width:1200px; margin:0 auto; padding:0 20px 60px; }
+
+  header { display:flex; align-items:center; justify-content:space-between; padding:28px 0 24px; border-bottom:1px solid var(--border); margin-bottom:32px; }
+  .logo { font-family:'Bebas Neue',sans-serif; font-size:2.2rem; letter-spacing:0.05em; color:var(--accent); line-height:1; }
+  .logo span { color:var(--text-dim); font-size:1rem; font-family:'IBM Plex Mono',monospace; display:block; letter-spacing:0.2em; }
+  .header-date { font-family:'IBM Plex Mono',monospace; font-size:0.75rem; color:var(--text-dim); text-align:right; }
+
+  .stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:32px; }
+  .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:20px; position:relative; overflow:hidden; transition:border-color 0.2s; }
+  .stat-card:hover { border-color:var(--accent-dim); }
+  .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
+  .stat-card.cash::before { background:var(--accent); }
+  .stat-card.bills::before { background:var(--orange); }
+  .stat-card.loans::before { background:var(--red); }
+  .stat-card.profit::before { background:var(--green); }
+  .stat-label { font-family:'IBM Plex Mono',monospace; font-size:0.65rem; letter-spacing:0.15em; color:var(--text-dim); text-transform:uppercase; margin-bottom:10px; }
+  .stat-value { font-family:'Bebas Neue',sans-serif; font-size:2rem; letter-spacing:0.02em; line-height:1; }
+  .stat-value.cash { color:var(--accent); } .stat-value.bills { color:var(--orange); } .stat-value.loans { color:var(--red); } .stat-value.profit { color:var(--green); }
+  .stat-sub { font-size:0.72rem; color:var(--text-dim); margin-top:6px; font-family:'IBM Plex Mono',monospace; }
+  .full-col { margin-bottom:20px; }
+
+  .panel { background:var(--surface); border:1px solid var(--border); border-radius:4px; }
+  .panel-header { padding:16px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+  .panel-title { font-family:'IBM Plex Mono',monospace; font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--text-dim); }
+
+  .form-row { display:grid; gap:12px; margin-bottom:12px; }
+  .form-row-2 { grid-template-columns:1fr 1fr; } .form-row-3 { grid-template-columns:1fr 1fr 1fr; }
+  label { font-size:0.72rem; color:var(--text-dim); font-family:'IBM Plex Mono',monospace; letter-spacing:0.1em; text-transform:uppercase; display:block; margin-bottom:6px; }
+  input, select { width:100%; background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:10px 12px; border-radius:3px; font-family:'IBM Plex Sans',sans-serif; font-size:0.88rem; transition:border-color 0.15s; outline:none; }
+  input:focus, select:focus { border-color:var(--accent-dim); }
+  select option { background:var(--surface2); }
+
+  .btn { padding:10px 20px; border:none; border-radius:3px; cursor:pointer; font-family:'IBM Plex Mono',monospace; font-size:0.78rem; letter-spacing:0.1em; text-transform:uppercase; font-weight:600; transition:all 0.15s; }
+  .btn-primary { background:var(--accent); color:#0f1009; } .btn-primary:hover { background:var(--accent2); }
+  .btn-danger { background:transparent; border:1px solid var(--red); color:var(--red); } .btn-danger:hover { background:var(--red); color:white; }
+  .btn-success { background:transparent; border:1px solid var(--green); color:var(--green); } .btn-success:hover { background:var(--green); color:#0f1009; }
+  .btn-sm { padding:5px 10px; font-size:0.68rem; } .btn-full { width:100%; margin-top:4px; }
+
+  .tabs { display:flex; border-bottom:1px solid var(--border); }
+  .tab { padding:12px 20px; cursor:pointer; font-family:'IBM Plex Mono',monospace; font-size:0.68rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--text-dim); border-bottom:2px solid transparent; margin-bottom:-1px; transition:all 0.15s; }
+  .tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+  .tab-content { display:none; padding:20px; }
+  .tab-content.active { display:block; }
+
+  .table-wrap { overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; font-size:0.82rem; }
+  th { font-family:'IBM Plex Mono',monospace; font-size:0.63rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--text-dim); padding:10px 12px; border-bottom:1px solid var(--border); text-align:left; white-space:nowrap; }
+  td { padding:10px 12px; border-bottom:1px solid var(--border); vertical-align:middle; }
+  tr:last-child td { border-bottom:none; }
+  tr:hover td { background:var(--surface2); }
+
+  .badge { display:inline-block; padding:3px 8px; border-radius:2px; font-family:'IBM Plex Mono',monospace; font-size:0.63rem; letter-spacing:0.05em; font-weight:600; text-transform:uppercase; }
+  .badge-pending { background:rgba(224,148,58,0.15); color:var(--orange); }
+  .badge-paid { background:rgba(78,203,113,0.15); color:var(--green); }
+  .badge-loan { background:rgba(224,92,74,0.15); color:var(--red); }
+  .badge-repay { background:rgba(74,184,212,0.15); color:var(--blue); }
+
+  .mono { font-family:'IBM Plex Mono',monospace; }
+  .green { color:var(--green); } .red { color:var(--red); } .orange { color:var(--orange); }
+  .blue { color:var(--blue); } .accent { color:var(--accent); } .dim { color:var(--text-dim); } .bold { font-weight:600; }
+
+  .summary-box { background:var(--surface2); border:1px solid var(--border); border-radius:3px; padding:14px 16px; margin-top:12px; font-family:'IBM Plex Mono',monospace; font-size:0.78rem; }
+  .summary-row { display:flex; justify-content:space-between; padding:4px 0; }
+  .summary-divider { border:none; border-top:1px solid var(--border); margin:8px 0; }
+
+  .alert { padding:10px 14px; border-radius:3px; font-size:0.82rem; margin-bottom:12px; display:none; }
+  .alert-success { background:rgba(78,203,113,0.12); border:1px solid rgba(78,203,113,0.3); color:var(--green); }
+  .alert-error { background:rgba(224,92,74,0.12); border:1px solid rgba(224,92,74,0.3); color:var(--red); }
+  .alert.show { display:block; }
+
+  .empty { text-align:center; padding:40px; color:var(--text-dim); font-family:'IBM Plex Mono',monospace; font-size:0.78rem; }
+
+  .progress-wrap { background:var(--border); border-radius:2px; height:6px; overflow:hidden; margin-top:6px; }
+  .progress-bar { height:100%; border-radius:2px; transition:width 0.5s ease; }
+
+  .worker-loan-card { background:var(--surface2); border:1px solid var(--border); border-radius:4px; padding:16px; margin-bottom:12px; }
+  .wlc-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; }
+
+  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:100; display:none; align-items:center; justify-content:center; }
+  .modal-overlay.open { display:flex; }
+  .modal { background:var(--surface); border:1px solid var(--border); border-radius:4px; width:90%; max-width:560px; max-height:90vh; overflow-y:auto; }
+  .modal-head { padding:20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+  .modal-body { padding:20px; }
+  .close-btn { background:none; border:none; color:var(--text-dim); cursor:pointer; font-size:1.2rem; }
+
+  @media(max-width:768px) {
+    .stats-grid { grid-template-columns:1fr 1fr; }
+    .form-row-2,.form-row-3 { grid-template-columns:1fr; }
+    .two-panel { grid-template-columns:1fr !important; }
+  }
+  @media(max-width:480px) { .stats-grid { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<div class="app">
+
+  <header>
+    <div class="logo">Bill Management<span>Firewood Bill Management</span></div>
+    <div style="display:flex;gap:20px;align-items:center;">
+      <div class="header-date" id="headerDate"></div>
+      <button class="btn btn-sm" onclick="logout()" style="margin:0;">LOGOUT</button>
+    </div>
+  </header>
+
+  <div class="stats-grid">
+    <div class="stat-card cash">
+      <div class="stat-label">Cash in Hand</div>
+      <div class="stat-value cash mono" id="statCash">LKR 0</div>
+      <div class="stat-sub">Available to deploy</div>
+    </div>
+    <div class="stat-card bills">
+      <div class="stat-label">Bills Outstanding</div>
+      <div class="stat-value bills mono" id="statBills">LKR 0</div>
+      <div class="stat-sub" id="statBillsSub">Government owes you</div>
+    </div>
+    <div class="stat-card loans">
+      <div class="stat-label">Loans Outstanding</div>
+      <div class="stat-value loans mono" id="statLoans">LKR 0</div>
+      <div class="stat-sub" id="statLoansSub">To be recovered</div>
+    </div>
+    <div class="stat-card profit">
+      <div class="stat-label">Total Profit (Est.)</div>
+      <div class="stat-value profit mono" id="statProfit">LKR 0</div>
+      <div class="stat-sub" id="statProfitSub">Realised + pending</div>
+    </div>
+  </div>
+
+  <div class="panel full-col">
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('transactions')">Transactions</div>
+      <div class="tab" onclick="switchTab('workers')">Workers</div>
+      <div class="tab" onclick="switchTab('bills')">Bills</div>
+      <div class="tab" onclick="switchTab('loans')">Loans</div>
+    </div>
+
+    <!-- TRANSACTIONS -->
+    <div class="tab-content active" id="tab-transactions">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;" class="two-panel">
+        <div>
+          <div class="panel-title" style="margin-bottom:14px;">Record Bill Purchase</div>
+          <div id="alert-tx" class="alert">.</div>
+          <div class="form-row form-row-2">
+            <div><label>Worker</label><select id="tx-worker" onchange="onTxWorkerChange()"><option value="">Select worker...</option></select></div>
+            <div><label>Date</label><input type="date" id="tx-date"></div>
+          </div>
+          <div class="form-row form-row-3">
+            <div><label>Weight (KG)</label><input type="number" id="tx-kg" placeholder="4000" min="0" oninput="calcTx()"></div>
+            <div><label>Govt Rate (LKR/kg)</label><input type="number" id="tx-rate-govt" value="10" min="0" oninput="calcTx()"></div>
+            <div><label>Our Rate (LKR/kg)</label><input type="number" id="tx-rate-ours" value="9" min="0" oninput="calcTx()"></div>
+          </div>
+          <div class="form-row"><div><label>Bill Due Date</label><input type="date" id="tx-due"></div></div>
+          <!-- Loan deduction — shown only when worker has outstanding loan -->
+          <div id="tx-loan-section" style="display:none;background:rgba(224,92,74,0.07);border:1px solid rgba(224,92,74,0.25);border-radius:3px;padding:12px;margin-bottom:12px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--red);margin-bottom:8px;">
+              Loan Deduction (Optional)
+            </div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:0.75rem;color:var(--text-dim);margin-bottom:10px;">
+              Outstanding loan: <span id="tx-loan-outstanding" class="red bold">LKR 0</span>
+            </div>
+            <div>
+              <label>Deduct from cash payment (LKR)</label>
+              <input type="number" id="tx-loan-deduct" placeholder="0 — leave blank to skip" min="0" oninput="calcTx()">
+            </div>
+          </div>
+          <div class="summary-box" id="tx-summary" style="display:none;">
+            <div class="summary-row"><span class="dim">Worker Entitled (@ our rate)</span><span class="accent" id="sum-we-pay">LKR 0</span></div>
+            <div class="summary-row" id="sum-deduct-row" style="display:none;"><span class="red">Loan Deducted</span><span class="red" id="sum-loan-ded">− LKR 0</span></div>
+            <hr class="summary-divider">
+            <div class="summary-row bold" style="font-size:1rem;"><span>Give to Worker</span><span class="accent" id="sum-cash-out" style="font-size:1.1rem;">LKR 0</span></div>
+          </div>
+          <button class="btn btn-primary btn-full" onclick="addTransaction()" style="margin-top:12px;">RECORD TRANSACTION</button>
+        </div>
+
+        <div>
+          <div class="panel-title" style="margin-bottom:14px;">Record Government Payment</div>
+          <div id="alert-pay" class="alert">.</div>
+          <div class="form-row"><div><label>Select Pending Bill</label>
+            <select id="pay-bill" onchange="onBillSelect()"><option value="">Select bill to mark paid...</option></select>
+          </div></div>
+          <div id="pay-bill-detail" class="summary-box" style="display:none;margin-top:0;margin-bottom:12px;">
+            <div class="summary-row"><span class="dim">Bill Amount</span><span class="orange" id="pay-bill-amount">LKR 0</span></div>
+            <div class="summary-row"><span class="dim">Worker</span><span id="pay-bill-worker">-</span></div>
+            <div class="summary-row"><span class="dim">Due Date</span><span id="pay-bill-due">-</span></div>
+          </div>
+          <div class="form-row form-row-2">
+            <div><label>Amount Received (LKR)</label><input type="number" id="pay-amount" placeholder="40000"></div>
+            <div><label>Date Received</label><input type="date" id="pay-date"></div>
+          </div>
+          <button class="btn btn-success btn-full" onclick="recordPayment()">MARK AS PAID</button>
+
+          <div class="panel-title" style="margin-bottom:14px;margin-top:28px;">Update Cash Balance</div>
+          <div class="form-row form-row-2">
+            <div><label>Amount (LKR)</label><input type="number" id="cash-amount" placeholder="50000"></div>
+            <div><label>Type</label><select id="cash-type"><option value="add">Add funds</option><option value="sub">Withdraw</option></select></div>
+          </div>
+          <div><label>Note</label><input type="text" id="cash-note" placeholder="e.g. initial capital"></div>
+          <button class="btn btn-primary btn-full" onclick="updateCash()" style="margin-top:12px;">UPDATE CASH</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- WORKERS -->
+    <div class="tab-content" id="tab-workers">
+      <div style="display:grid;grid-template-columns:300px 1fr;gap:24px;" class="two-panel">
+        <div>
+          <div class="panel-title" style="margin-bottom:14px;">Add Worker</div>
+          <div id="alert-worker" class="alert">.</div>
+          <div class="form-row"><div><label>Name</label><input type="text" id="w-name" placeholder="Worker name"></div></div>
+          <div class="form-row"><div><label>Phone</label><input type="text" id="w-phone" placeholder="07X XXX XXXX"></div></div>
+          <div class="form-row"><div><label>Village / Area</label><input type="text" id="w-area" placeholder="Area"></div></div>
+          <button class="btn btn-primary btn-full" onclick="addWorker()">ADD WORKER</button>
+        </div>
+        <div>
+          <div class="panel-title" style="margin-bottom:14px;">Worker List</div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Name</th><th>Area</th><th>Phone</th><th>Total KG</th><th>Bills</th><th>Loan Balance</th><th></th></tr></thead>
+              <tbody id="workers-tbody"><tr><td colspan="7" class="empty">No workers yet</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BILLS -->
+    <div class="tab-content" id="tab-bills">
+      <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+        <select id="filter-bill-status" onchange="renderBillsTable()" style="width:auto;padding:8px 12px;">
+          <option value="all">All Status</option><option value="pending">Pending</option><option value="paid">Paid</option>
+        </select>
+        <select id="filter-bill-worker" onchange="renderBillsTable()" style="width:auto;padding:8px 12px;">
+          <option value="all">All Workers</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Date</th><th>Worker</th><th>KG</th><th>Bill Value</th><th>Our Rate Total</th><th>Loan Deducted</th><th>Cash Paid Out</th><th>Profit</th><th>Due Date</th><th>Status</th></tr></thead>
+          <tbody id="bills-tbody"><tr><td colspan="11" class="empty">No bills recorded</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- LOANS -->
+    <div class="tab-content" id="tab-loans">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;" class="two-panel">
+
+        <!-- Left: Give + Repay forms -->
+        <div>
+          <!-- GIVE LOAN -->
+          <div class="panel-title" style="margin-bottom:14px;">Give Loan (No Interest)</div>
+          <div id="alert-loan" class="alert">.</div>
+          <div class="form-row">
+            <div><label>Worker</label>
+              <select id="loan-worker" onchange="onLoanWorkerChange()"><option value="">Select worker...</option></select>
+            </div>
+          </div>
+          <div id="loan-bal-box" class="summary-box" style="display:none;margin-top:0;">
+            <div class="summary-row"><span class="dim">Current Loan Balance</span><span id="loan-current-bal" class="red bold">LKR 0</span></div>
+          </div>
+          <div class="form-row form-row-2" style="margin-top:12px;">
+            <div><label>Amount (LKR)</label><input type="number" id="loan-amount" placeholder="30000"></div>
+            <div><label>Date</label><input type="date" id="loan-date"></div>
+          </div>
+          <div><label>Note (optional)</label><input type="text" id="loan-note" placeholder="Reason"></div>
+          <button class="btn btn-danger btn-full" onclick="giveLoan()" style="margin-top:12px;">GIVE LOAN</button>
+
+          <!-- REPAYMENT -->
+          <div style="margin-top:32px;padding-top:24px;border-top:1px solid var(--border);">
+            <div class="panel-title" style="margin-bottom:14px;">Record Loan Repayment</div>
+            <div id="alert-repay" class="alert">.</div>
+            <div class="form-row">
+              <div><label>Worker</label>
+                <select id="repay-worker" onchange="onRepayWorkerChange()"><option value="">Select worker...</option></select>
+              </div>
+            </div>
+            <div id="repay-bal-box" class="summary-box" style="display:none;margin-top:0;">
+              <div class="summary-row"><span class="dim">Outstanding Balance</span><span id="repay-current-bal" class="red bold">LKR 0</span></div>
+            </div>
+            <div class="form-row form-row-2" style="margin-top:12px;">
+              <div><label>Amount Collected (LKR)</label><input type="number" id="repay-amount" placeholder="3000"></div>
+              <div><label>Date</label><input type="date" id="repay-date"></div>
+            </div>
+            <div><label>Note (optional)</label><input type="text" id="repay-note" placeholder="e.g. from bill payment, cash hand"></div>
+            <button class="btn btn-success btn-full" onclick="recordRepayment()" style="margin-top:12px;">RECORD REPAYMENT</button>
+          </div>
+        </div>
+
+        <!-- Right: Loan Ledger per worker -->
+        <div>
+          <div class="panel-title" style="margin-bottom:14px;">Loan Ledger — Per Worker</div>
+          <div id="loan-ledger-wrap"><div class="empty">No loans recorded yet</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVITY -->
+  <div class="panel full-col">
+    <div class="panel-header">
+      <span class="panel-title">Recent Activity</span>
+      <span class="dim" style="font-size:0.72rem;font-family:'IBM Plex Mono',monospace;" id="activityCount">0 records</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Time</th><th>Type</th><th>Worker</th><th>Detail</th><th>Amount</th><th>Cash Effect</th></tr></thead>
+        <tbody id="activity-tbody"><tr><td colspan="6" class="empty">No activity yet</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="workerModal">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="panel-title" id="modal-worker-name">Worker</span>
+      <button class="close-btn" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-worker-body"></div>
+  </div>
+</div>
+
+<script>
+// ── API CONFIG ────────────────────────────────────────────
+const API_BASE = ''; // Use relative URLs (same domain/port)
+let state = { cash:0, workers:[], bills:[], loans:[], repayments:[], activity:[], cashLogs:[] };
+
+// Get JWT token from localStorage (set by login.html)
+function getToken() {
+  return localStorage.getItem('token');
+}
+
+// API helper with token
+async function apiCall(endpoint, method='GET', data=null) {
+  const token = getToken();
+  if (!token) {
+    window.location.href = '/'; // Redirect to login if no token
+    return null;
+  }
+
+  const options = {
+    method,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  };
+
+  if (data && (method === 'POST' || method === 'PATCH')) {
+    options.body = JSON.stringify(data);
+  }
+
+  try {
+    const response = await fetch(`${API_BASE}/api${endpoint}`, options);
+    if (response.status === 401) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/';
+      return null;
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('API Error:', error);
+    sa('alert-tx', 'Server error. Make sure backend is running.', 1);
+    return null;
+  }
+}
+
+// Load state from API
+async function loadState() {
+  const data = await apiCall('/business/state');
+  if (data && data.data) {
+    state = data.data;
+  }
+}
+
+// ── INIT ───────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadState();
+  setDates(); startClock(); populateSelects(); renderAll();
+});
+
+function setDates() {
+  const t = new Date().toISOString().split('T')[0];
+  ['tx-date','pay-date','loan-date','repay-date'].forEach(id => { const e = document.getElementById(id); if(e) e.value=t; });
+  const due = new Date(); due.setDate(due.getDate()+45);
+  document.getElementById('tx-due').value = due.toISOString().split('T')[0];
+}
+
+function startClock() {
+  const el = document.getElementById('headerDate');
+  const tick = () => { const n = new Date(); el.innerHTML = `${n.toLocaleDateString('en-LK',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}<br><span style="color:var(--accent)">${n.toLocaleTimeString('en-LK')}</span>`; };
+  tick(); setInterval(tick, 1000);
+}
+
+function fmt(n) { return 'LKR ' + Math.abs(Number(n)||0).toLocaleString('en-LK'); }
+function fmtN(n) { return Number(n).toLocaleString('en-LK'); }
+
+// ── LOAN HELPERS ──────────────────────────────────────────
+function loanGiven(wid)   { return state.loans.filter(l=>l.workerId===wid).reduce((s,l)=>s+l.amount,0); }
+function loanRepaid(wid)  { return state.repayments.filter(r=>r.workerId===wid).reduce((s,r)=>s+r.amount,0); }
+function loanBalance(wid) { return loanGiven(wid) - loanRepaid(wid); }
+
+// ── POPULATE SELECTS ─────────────────────────────────────
+function populateSelects() {
+  ['tx-worker','loan-worker','repay-worker','filter-bill-worker'].forEach(id => {
+    const el = document.getElementById(id); if(!el) return;
+    const cur = el.value;
+    el.innerHTML = id==='filter-bill-worker' ? '<option value="all">All Workers</option>' : '<option value="">Select worker...</option>';
+    state.workers.forEach(w => { const o=document.createElement('option'); o.value=w.id; o.textContent=w.name+(w.area?` (${w.area})`:''); el.appendChild(o); });
+    if(cur) el.value=cur;
+  });
+  const bs = document.getElementById('pay-bill');
+  const cb = bs.value;
+  bs.innerHTML = '<option value="">Select bill to mark paid...</option>';
+  state.bills.filter(b=>b.status==='pending').forEach(b => {
+    const w=state.workers.find(x=>x.id===b.workerId);
+    const o=document.createElement('option'); o.value=b.id;
+    o.textContent=`#${b.id} — ${w?w.name:'?'} — ${fmt(b.billValue)} — Due: ${b.dueDate||'?'}`;
+    bs.appendChild(o);
+  });
+  if(cb) bs.value=cb;
+}
+
+// ── TX WORKER CHANGE — show loan section if worker has outstanding loan ──
+function onTxWorkerChange() {
+  const wid=parseInt(document.getElementById('tx-worker').value);
+  const sec=document.getElementById('tx-loan-section');
+  document.getElementById('tx-loan-deduct').value='';
+  if(!wid){sec.style.display='none'; calcTx(); return;}
+  const bal=loanBalance(wid);
+  if(bal>0){
+    document.getElementById('tx-loan-outstanding').textContent=fmt(bal);
+    sec.style.display='block';
+  } else {
+    sec.style.display='none';
+  }
+  calcTx();
+}
+
+// ── TRANSACTION CALC ──────────────────────────────────────
+function calcTx() {
+  const kg=parseFloat(document.getElementById('tx-kg').value)||0;
+  const rg=parseFloat(document.getElementById('tx-rate-govt').value)||10;
+  const ro=parseFloat(document.getElementById('tx-rate-ours').value)||9;
+  if(!kg){document.getElementById('tx-summary').style.display='none';return;}
+  const wePay=kg*ro;
+  const rawDeduct=parseFloat(document.getElementById('tx-loan-deduct').value)||0;
+  const wid=parseInt(document.getElementById('tx-worker').value);
+  const maxDeduct=wid?Math.min(loanBalance(wid),wePay):0;
+  const deduct=Math.min(rawDeduct,maxDeduct);
+  const cashOut=wePay-deduct;
+  document.getElementById('tx-summary').style.display='block';
+  document.getElementById('sum-we-pay').textContent=fmt(wePay);
+  const dr=document.getElementById('sum-deduct-row');
+  if(deduct>0){
+    dr.style.display='flex';
+    document.getElementById('sum-loan-ded').textContent='− '+fmt(deduct);
+  } else {
+    dr.style.display='none';
+  }
+  document.getElementById('sum-cash-out').textContent=fmt(cashOut);
+}
+
+// ── ADD TRANSACTION ───────────────────────────────────────
+async function addTransaction() {
+  const wid=parseInt(document.getElementById('tx-worker').value);
+  const kg=parseFloat(document.getElementById('tx-kg').value);
+  const rg=parseFloat(document.getElementById('tx-rate-govt').value)||10;
+  const ro=parseFloat(document.getElementById('tx-rate-ours').value)||9;
+  const date=document.getElementById('tx-date').value;
+  const due=document.getElementById('tx-due').value;
+  const rawDeduct=parseFloat(document.getElementById('tx-loan-deduct').value)||0;
+
+  if(!wid) return sa('alert-tx','Please select a worker',1);
+  if(!kg||kg<=0) return sa('alert-tx','Please enter weight in KG',1);
+
+  const wePay=kg*ro;
+  const bal=loanBalance(wid);
+  const deduct=Math.min(rawDeduct, bal, wePay);
+  const cashOut=wePay-deduct;
+
+  if(cashOut>state.cash) return sa('alert-tx',`Insufficient cash! Need ${fmt(cashOut)} but have ${fmt(state.cash)}`,1);
+  if(rawDeduct>bal) return sa('alert-tx',`Deduction (${fmt(rawDeduct)}) exceeds loan balance (${fmt(bal)})`,1);
+  if(rawDeduct>wePay) return sa('alert-tx',`Deduction cannot exceed what worker is owed (${fmt(wePay)})`,1);
+
+  const billData = {
+    workerId: wid,
+    kg,
+    date,
+    dueDate: due,
+    rateGovt: rg,
+    rateOurs: ro,
+    loanDeducted: deduct > 0 ? deduct : 0
+  };
+
+  const result = await apiCall('/business/bills', 'POST', billData);
+  if (!result || !result.success) {
+    return sa('alert-tx', result?.message || 'Failed to record bill', 1);
+  }
+
+  await loadState();
+  
+  document.getElementById('tx-kg').value='';
+  document.getElementById('tx-loan-deduct').value='';
+  document.getElementById('tx-summary').style.display='none';
+  document.getElementById('tx-loan-section').style.display='none';
+  document.getElementById('tx-worker').value='';
+  populateSelects(); renderAll();
+  sa('alert-tx',`Bill recorded! Cash given: ${fmt(cashOut)}${deduct>0?' | Loan deducted: '+fmt(deduct)+' | New loan balance: '+fmt(loanBalance(wid)):''}`);
+}
+
+// ── BILL SELECT ───────────────────────────────────────────
+function onBillSelect() {
+  const bid=parseInt(document.getElementById('pay-bill').value);
+  const d=document.getElementById('pay-bill-detail');
+  if(!bid){d.style.display='none';return;}
+  const b=state.bills.find(x=>x.id===bid); if(!b) return;
+  const w=state.workers.find(x=>x.id===b.workerId);
+  document.getElementById('pay-bill-amount').textContent=fmt(b.billValue);
+  document.getElementById('pay-bill-worker').textContent=w?w.name:'?';
+  document.getElementById('pay-bill-due').textContent=b.dueDate||'-';
+  document.getElementById('pay-amount').value=b.billValue;
+  d.style.display='block';
+}
+
+// ── RECORD GOVT PAYMENT ───────────────────────────────────
+async function recordPayment() {
+  const bid=parseInt(document.getElementById('pay-bill').value);
+  const amt=parseFloat(document.getElementById('pay-amount').value);
+  const date=document.getElementById('pay-date').value;
+  if(!bid) return sa('alert-pay','Please select a bill',1);
+  if(!amt||amt<=0) return sa('alert-pay','Please enter amount received',1);
+  
+  const result = await apiCall(`/business/bills/${bid}/pay`, 'PATCH', {
+    paidAmount: amt,
+    paidDate: date
+  });
+  
+  if (!result || !result.success) {
+    return sa('alert-pay', result?.message || 'Failed to mark bill as paid', 1);
+  }
+
+  await loadState();
+  document.getElementById('pay-bill').value=''; 
+  document.getElementById('pay-bill-detail').style.display='none'; 
+  document.getElementById('pay-amount').value='';
+  populateSelects(); renderAll();
+  sa('alert-pay',`${fmt(amt)} received from government and added to cash!`);
+}
+
+// ── UPDATE CASH ───────────────────────────────────────────
+async function updateCash() {
+  const amt=parseFloat(document.getElementById('cash-amount').value);
+  const type=document.getElementById('cash-type').value;
+  const note=document.getElementById('cash-note').value;
+  if(!amt||amt<=0) return;
+  const change=type==='add'?amt:-amt;
+  if(change<0&&Math.abs(change)>state.cash) return sa('alert-pay','Insufficient cash to withdraw!',1);
+  
+  const result = await apiCall('/business/cash', 'POST', {
+    amount: amt,
+    type: type,
+    note: note
+  });
+  
+  if (!result || !result.success) {
+    return sa('alert-pay', result?.message || 'Failed to update cash', 1);
+  }
+
+  await loadState();
+  document.getElementById('cash-amount').value=''; 
+  document.getElementById('cash-note').value='';
+  renderStats(); renderActivity();
+}
+
+// ── WORKERS ───────────────────────────────────────────────
+async function addWorker() {
+  const name=document.getElementById('w-name').value.trim();
+  if(!name) return sa('alert-worker','Please enter worker name',1);
+  
+  const result = await apiCall('/business/workers', 'POST', {
+    name: name,
+    phone: document.getElementById('w-phone').value.trim(),
+    area: document.getElementById('w-area').value.trim()
+  });
+  
+  if (!result || !result.success) {
+    return sa('alert-worker', result?.message || 'Failed to add worker', 1);
+  }
+
+  await loadState();
+  document.getElementById('w-name').value=''; 
+  document.getElementById('w-phone').value=''; 
+  document.getElementById('w-area').value='';
+  populateSelects(); renderAll(); 
+  sa('alert-worker',`Worker "${name}" added!`);
+}
+
+function renderWorkersTable() {
+  const tb=document.getElementById('workers-tbody');
+  if(!state.workers.length){tb.innerHTML='<tr><td colspan="7" class="empty">No workers yet</td></tr>';return;}
+  tb.innerHTML=state.workers.map(w=>{
+    const kg=state.bills.filter(b=>b.workerId===w.id).reduce((s,b)=>s+b.kg,0);
+    const bc=state.bills.filter(b=>b.workerId===w.id).length;
+    const lb=loanBalance(w.id);
+    return `<tr>
+      <td class="bold">${w.name}</td><td class="dim">${w.area||'-'}</td><td class="mono dim">${w.phone||'-'}</td>
+      <td class="mono">${fmtN(kg)} KG</td><td class="mono">${bc}</td>
+      <td class="mono ${lb>0?'red':'green'}">${lb>0?fmt(lb):'✓ Clear'}</td>
+      <td><button class="btn btn-sm btn-success" onclick="viewWorker(${w.id})">View</button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ── BILLS TABLE ───────────────────────────────────────────
+function renderBillsTable() {
+  const sf=document.getElementById('filter-bill-status').value;
+  const wf=document.getElementById('filter-bill-worker').value;
+  let bills=[...state.bills].reverse();
+  if(sf!=='all') bills=bills.filter(b=>b.status===sf);
+  if(wf!=='all') bills=bills.filter(b=>b.workerId===parseInt(wf));
+  const tb=document.getElementById('bills-tbody');
+  if(!bills.length){tb.innerHTML='<tr><td colspan="11" class="empty">No bills found</td></tr>';return;}
+  tb.innerHTML=bills.map(b=>{
+    const w=state.workers.find(x=>x.id===b.workerId);
+    const ov=b.status==='pending'&&b.dueDate&&new Date(b.dueDate)<new Date();
+    const ded=b.loanDeducted||0;
+    const cashPaid=b.cashPaid!=null?b.cashPaid:b.wePaid;
+    return `<tr>
+      <td class="mono dim">#${b.id}</td><td class="mono">${b.date}</td>
+      <td class="bold">${w?w.name:'?'}</td><td class="mono">${fmtN(b.kg)}</td>
+      <td class="mono orange">${fmt(b.billValue)}</td>
+      <td class="mono dim">${fmt(b.wePaid)}</td>
+      <td class="mono ${ded>0?'red':'dim'}">${ded>0?'− '+fmt(ded):'-'}</td>
+      <td class="mono accent bold">${fmt(cashPaid)}</td>
+      <td class="mono green">${fmt(b.profit)}</td>
+      <td class="mono ${ov?'red bold':'dim'}">${b.dueDate||'-'}${ov?' ⚠':''}</td>
+      <td><span class="badge badge-${b.status}">${b.status}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ── LOANS ─────────────────────────────────────────────────
+function onLoanWorkerChange() {
+  const wid=parseInt(document.getElementById('loan-worker').value);
+  const box=document.getElementById('loan-bal-box');
+  if(!wid){box.style.display='none';return;}
+  const bal=loanBalance(wid);
+  document.getElementById('loan-current-bal').textContent=bal>0?fmt(bal):'LKR 0 (no outstanding loan)';
+  document.getElementById('loan-current-bal').className=bal>0?'red bold':'green bold';
+  box.style.display='block';
+}
+
+function giveLoan() {
+  performGiveLoan();
+}
+
+async function performGiveLoan() {
+  const wid=parseInt(document.getElementById('loan-worker').value);
+  const amt=parseFloat(document.getElementById('loan-amount').value);
+  const date=document.getElementById('loan-date').value;
+  const note=document.getElementById('loan-note').value;
+  if(!wid) return sa('alert-loan','Please select a worker',1);
+  if(!amt||amt<=0) return sa('alert-loan','Please enter amount',1);
+  if(amt>state.cash) return sa('alert-loan',`Insufficient cash! Have ${fmt(state.cash)}`,1);
+  
+  const result = await apiCall('/business/loans', 'POST', {
+    workerId: wid,
+    amount: amt,
+    date: date,
+    note: note
+  });
+  
+  if (!result || !result.success) {
+    return sa('alert-loan', result?.message || 'Failed to give loan', 1);
+  }
+
+  await loadState();
+  const w=state.workers.find(x=>x.id===wid);
+  document.getElementById('loan-amount').value=''; 
+  document.getElementById('loan-note').value='';
+  onLoanWorkerChange(); populateSelects(); renderAll();
+  sa('alert-loan',`Loan of ${fmt(amt)} given to ${w?.name}. New balance: ${fmt(loanBalance(wid))}`);
+}
+
+// ── REPAYMENT (flexible, any amount any time) ─────────────
+function onRepayWorkerChange() {
+  const wid=parseInt(document.getElementById('repay-worker').value);
+  const box=document.getElementById('repay-bal-box');
+  if(!wid){box.style.display='none';return;}
+  const bal=loanBalance(wid);
+  document.getElementById('repay-current-bal').textContent=bal>0?fmt(bal):'LKR 0 — Nothing to repay';
+  document.getElementById('repay-current-bal').className=bal>0?'red bold':'green bold';
+  box.style.display='block';
+}
+
+function recordRepayment() {
+  performRecordRepayment();
+}
+
+async function performRecordRepayment() {
+  const wid=parseInt(document.getElementById('repay-worker').value);
+  const amt=parseFloat(document.getElementById('repay-amount').value);
+  const date=document.getElementById('repay-date').value;
+  const note=document.getElementById('repay-note').value;
+  if(!wid) return sa('alert-repay','Please select a worker',1);
+  if(!amt||amt<=0) return sa('alert-repay','Please enter amount',1);
+  const bal=loanBalance(wid);
+  if(bal<=0) return sa('alert-repay','This worker has no outstanding loan!',1);
+  if(amt>bal) return sa('alert-repay',`Amount exceeds balance! Outstanding: ${fmt(bal)}`,1);
+  
+  const result = await apiCall('/business/repayments', 'POST', {
+    workerId: wid,
+    amount: amt,
+    date: date,
+    note: note
+  });
+  
+  if (!result || !result.success) {
+    return sa('alert-repay', result?.message || 'Failed to record repayment', 1);
+  }
+
+  await loadState();
+  const w=state.workers.find(x=>x.id===wid);
+  const newBal=loanBalance(wid);
+  document.getElementById('repay-amount').value=''; 
+  document.getElementById('repay-note').value='';
+  onRepayWorkerChange(); renderAll();
+  sa('alert-repay',`${fmt(amt)} collected from ${w?.name}. Remaining: ${newBal>0?fmt(newBal):'CLEARED ✓'}`);
+}
+
+// ── LOAN LEDGER ───────────────────────────────────────────
+function renderLoanLedger() {
+  const wrap=document.getElementById('loan-ledger-wrap');
+  const wids=[...new Set(state.loans.map(l=>l.workerId))];
+  if(!wids.length){wrap.innerHTML='<div class="empty">No loans recorded yet</div>';return;}
+
+  wrap.innerHTML=wids.map(wid=>{
+    const w=state.workers.find(x=>x.id===wid);
+    const given=loanGiven(wid), repaid=loanRepaid(wid), bal=given-repaid;
+    const pct=given>0?Math.min(100,Math.round((repaid/given)*100)):0;
+    const reps=state.repayments.filter(r=>r.workerId===wid);
+
+    return `<div class="worker-loan-card">
+      <div class="wlc-header">
+        <div>
+          <div class="bold" style="font-size:0.95rem;">${w?w.name:'Unknown'}</div>
+          <div class="dim" style="font-size:0.72rem;font-family:'IBM Plex Mono',monospace;">${w?.area||''}</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="mono ${bal>0?'red':'green'} bold" style="font-size:1rem;">${bal>0?fmt(bal):'✓ Cleared'}</div>
+          <div class="dim" style="font-size:0.68rem;font-family:'IBM Plex Mono',monospace;">balance</div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:0.7rem;margin-bottom:4px;">
+        <span class="dim">Repaid: <span class="green">${fmt(repaid)}</span></span>
+        <span class="dim">Given: <span class="orange">${fmt(given)}</span></span>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-bar" style="width:${pct}%;background:${bal===0?'var(--green)':'var(--accent)'}"></div>
+      </div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;color:var(--text-dim);margin-top:4px;">${pct}% recovered</div>
+
+      ${reps.length?`
+      <div style="margin-top:12px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px;">Repayment History</div>
+        ${[...reps].reverse().map(r=>`
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);font-size:0.78rem;">
+            <span class="mono dim">${r.date}</span>
+            <span class="mono blue bold">${fmt(r.amount)}</span>
+            <span class="dim" style="max-width:120px;text-align:right;font-size:0.72rem;">${r.note||'—'}</span>
+          </div>`).join('')}
+      </div>` : `<div style="font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--text-dim);margin-top:10px;">No repayments recorded yet</div>`}
+    </div>`;
+  }).join('');
+}
+
+// ── STATS ─────────────────────────────────────────────────
+function renderStats() {
+  const pv=state.bills.filter(b=>b.status==='pending').reduce((s,b)=>s+b.billValue,0);
+  const pc=state.bills.filter(b=>b.status==='pending').length;
+  const lo=state.workers.reduce((s,w)=>s+Math.max(0,loanBalance(w.id)),0);
+  const lw=state.workers.filter(w=>loanBalance(w.id)>0).length;
+  const rp=state.bills.filter(b=>b.status==='paid').reduce((s,b)=>s+b.profit,0);
+  const pp=state.bills.filter(b=>b.status==='pending').reduce((s,b)=>s+b.profit,0);
+  document.getElementById('statCash').textContent=fmt(state.cash);
+  document.getElementById('statBills').textContent=fmt(pv);
+  document.getElementById('statBillsSub').textContent=`${pc} pending bill${pc!==1?'s':''}`;
+  document.getElementById('statLoans').textContent=fmt(lo);
+  document.getElementById('statLoansSub').textContent=`${lw} worker${lw!==1?'s':''} with balance`;
+  document.getElementById('statProfit').textContent=fmt(rp+pp);
+  document.getElementById('statProfitSub').textContent=`${fmt(rp)} realised + ${fmt(pp)} pending`;
+}
+
+// ── ACTIVITY ──────────────────────────────────────────────
+function log(type,worker,detail,amount,cashEffect) {
+  state.activity.unshift({time:new Date().toISOString(),type,worker:worker||'-',detail,amount,cashEffect});
+  if(state.activity.length>100) state.activity=state.activity.slice(0,100);
+}
+
+function renderActivity() {
+  const tb=document.getElementById('activity-tbody');
+  document.getElementById('activityCount').textContent=state.activity.length+' records';
+  if(!state.activity.length){tb.innerHTML='<tr><td colspan="6" class="empty">No activity yet</td></tr>';return;}
+  const bc={bill:'pending',payment:'paid',loan:'loan',repay:'repay',worker:'pending',cash:'paid'};
+  tb.innerHTML=state.activity.slice(0,40).map(a=>{
+    const d=new Date(a.time);
+    const ts=d.toLocaleDateString('en-LK')+' '+d.toLocaleTimeString('en-LK',{hour:'2-digit',minute:'2-digit'});
+    return `<tr>
+      <td class="mono dim" style="font-size:0.75rem;">${ts}</td>
+      <td><span class="badge badge-${bc[a.type]||'pending'}">${a.type}</span></td>
+      <td class="bold">${a.worker}</td><td class="dim">${a.detail}</td>
+      <td class="mono">${a.amount?fmt(a.amount):'-'}</td>
+      <td class="mono ${a.cashEffect>0?'green':a.cashEffect<0?'red':'dim'}">${a.cashEffect>0?'+':''}${a.cashEffect!==0&&a.cashEffect!=null?fmt(a.cashEffect):'-'}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── RENDER ALL ────────────────────────────────────────────
+function renderAll() {
+  renderStats(); renderWorkersTable(); renderBillsTable(); renderLoanLedger(); renderActivity();
+}
+
+// ── TABS ──────────────────────────────────────────────────
+function switchTab(name) {
+  const tabs=['transactions','workers','bills','loans'];
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',tabs[i]===name));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+}
+
+// ── WORKER MODAL ──────────────────────────────────────────
+function viewWorker(wid) {
+  const w=state.workers.find(x=>x.id===wid); if(!w) return;
+  const bills=state.bills.filter(b=>b.workerId===wid);
+  const kg=bills.reduce((s,b)=>s+b.kg,0);
+  const bv=bills.reduce((s,b)=>s+b.billValue,0);
+  const given=loanGiven(wid), repaid=loanRepaid(wid), bal=given-repaid;
+  document.getElementById('modal-worker-name').textContent=w.name;
+  document.getElementById('modal-worker-body').innerHTML=`
+    <div class="summary-box">
+      <div class="summary-row"><span class="dim">Area</span><span>${w.area||'-'}</span></div>
+      <div class="summary-row"><span class="dim">Phone</span><span class="mono">${w.phone||'-'}</span></div>
+      <hr class="summary-divider">
+      <div class="summary-row"><span class="dim">Total KG Supplied</span><span class="mono">${fmtN(kg)} KG</span></div>
+      <div class="summary-row"><span class="dim">Total Bill Value</span><span class="orange">${fmt(bv)}</span></div>
+      <div class="summary-row"><span class="dim">Pending Bills</span><span class="orange">${bills.filter(b=>b.status==='pending').length}</span></div>
+      <hr class="summary-divider">
+      <div class="summary-row"><span class="dim">Total Loan Given</span><span class="red">${given>0?fmt(given):'None'}</span></div>
+      <div class="summary-row"><span class="dim">Total Repaid</span><span class="green">${fmt(repaid)}</span></div>
+      <div class="summary-row bold"><span class="dim">Loan Balance</span><span class="${bal>0?'red':'green'}">${bal>0?fmt(bal):'✓ Cleared'}</span></div>
+    </div>
+    <div style="margin-top:16px;">
+      <div class="panel-title" style="margin-bottom:10px;">Repayment History</div>
+      ${state.repayments.filter(r=>r.workerId===wid).length?`
+      <div class="table-wrap"><table>
+        <thead><tr><th>Date</th><th>Amount</th><th>Note</th></tr></thead>
+        <tbody>${[...state.repayments.filter(r=>r.workerId===wid)].reverse().map(r=>`
+          <tr><td class="mono">${r.date}</td><td class="mono blue">${fmt(r.amount)}</td><td class="dim">${r.note||'-'}</td></tr>`).join('')}
+        </tbody>
+      </table></div>`:'<div class="dim" style="font-size:0.82rem;padding:8px 0;">No repayments recorded</div>'}
+    </div>
+    <div style="margin-top:16px;">
+      <div class="panel-title" style="margin-bottom:10px;">Recent Bills</div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Date</th><th>KG</th><th>Bill Value</th><th>Status</th></tr></thead>
+        <tbody>${bills.length?[...bills].reverse().slice(0,6).map(b=>`
+          <tr><td class="mono">${b.date}</td><td class="mono">${fmtN(b.kg)}</td>
+          <td class="orange mono">${fmt(b.billValue)}</td>
+          <td><span class="badge badge-${b.status}">${b.status}</span></td></tr>`).join('')
+          :'<tr><td colspan="4" class="empty">No bills yet</td></tr>'}
+        </tbody>
+      </table></div>
+    </div>`;
+  document.getElementById('workerModal').classList.add('open');
+}
+
+function closeModal(){document.getElementById('workerModal').classList.remove('open');}
+document.getElementById('workerModal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+// ── ALERTS ────────────────────────────────────────────────
+function sa(id,msg,err=0) {
+  const el=document.getElementById(id); if(!el) return;
+  el.textContent=msg; el.className=`alert ${err?'alert-error':'alert-success'} show`;
+  setTimeout(()=>el.classList.remove('show'),4000);
+}
+
+// ── LOGOUT ────────────────────────────────────────────────
+function logout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  window.location.href = '/login.html';
+}
+// Redirect to login if not authenticated
+if (!localStorage.getItem('token')) {
+  window.location.href = '/login.html';
+}
+
+// Redirect to dashboard if logged in
+if (localStorage.getItem('token')) {
+  if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
+    window.location.href = '/dashboard';
+  }
+}
+</script>
+</body>
+</html>
