@@ -1,5 +1,5 @@
-import express from 'express';
-import { Bill } from '../models/schemas.js';
+const express = require('express');
+const { Bill } = require('../models/schemas');
 
 const router = express.Router();
 
@@ -110,4 +110,4 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;

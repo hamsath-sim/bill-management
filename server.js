@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const { verifyToken } = require('./middleware/auth');
 
 dotenv.config();
 
@@ -25,6 +26,8 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/firewood-
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/business', require('./routes/business'));
+app.use('/api/bills', verifyToken, require('./routes/bills'));
+app.use('/api/cash', verifyToken, require('./routes/cash'));
 
 // Health check
 app.get('/health', (req, res) => {
