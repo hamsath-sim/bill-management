@@ -3,26 +3,32 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bill Management — Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Firewood Bill Management System</title>
   <link
-    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
     rel="stylesheet">
   <style>
     :root {
-      --bg: #f8f9fa;
+      --bg: #f8fafc;
       --surface: #ffffff;
-      --surface2: #f5f6f8;
-      --border: #e1e4e8;
-      --accent: #5b7cff;
-      --accent2: #4a68ff;
-      --accent-dim: #7a8e1e;
-      --text: #1f2937;
-      --text-dim: #6b7280;
-      --red: #ff4757;
-      --green: #2ed573;
-      --orange: #e0943a;
-      --blue: #4ab8d4;
+      --surface2: #f1f5f9;
+      --border: #e2e8f0;
+      --accent: #3b82f6;
+      --accent2: #2563eb;
+      --accent-dim: #94a3b8;
+      --accent-glow: rgba(59, 130, 246, 0.1);
+      --text: #0f172a;
+      --text-dim: #64748b;
+      --red: #ef4444;
+      --green: #22c55e;
+      --orange: #f59e0b;
+      --blue: #0ea5e9;
+      --purple: #8b5cf6;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      --radius: 12px;
     }
 
     * {
@@ -34,7 +40,7 @@
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: 'IBM Plex Sans', sans-serif;
+      font-family: 'Inter', sans-serif;
       min-height: 100vh;
     }
 
@@ -50,7 +56,7 @@
     .app {
       position: relative;
       z-index: 1;
-      max-width: 1200px;
+      max-width: 1280px;
       margin: 0 auto;
       padding: 0 20px 60px;
     }
@@ -65,24 +71,25 @@
     }
 
     .logo {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 2.2rem;
-      letter-spacing: 0.05em;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.4rem;
+      font-weight: 700;
       color: var(--accent);
       line-height: 1;
     }
 
     .logo span {
       color: var(--text-dim);
-      font-size: 1rem;
-      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      font-family: 'JetBrains Mono', monospace;
       display: block;
-      letter-spacing: 0.2em;
+      letter-spacing: 0.25em;
+      margin-top: 3px;
     }
 
     .header-date {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
       color: var(--text-dim);
       text-align: right;
     }
@@ -97,15 +104,17 @@
     .stat-card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 4px;
+      border-radius: 12px;
       padding: 20px;
       position: relative;
       overflow: hidden;
-      transition: border-color 0.2s;
+      transition: box-shadow 0.2s, transform 0.2s;
+      box-shadow: var(--shadow);
     }
 
     .stat-card:hover {
-      border-color: var(--accent-dim);
+      box-shadow: 0 6px 20px rgba(79, 110, 247, 0.15);
+      transform: translateY(-3px);
     }
 
     .stat-card::before {
@@ -134,8 +143,8 @@
     }
 
     .stat-label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.65rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.63rem;
       letter-spacing: 0.15em;
       color: var(--text-dim);
       text-transform: uppercase;
@@ -143,8 +152,9 @@
     }
 
     .stat-value {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 2rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.5rem;
+      font-weight: 700;
       letter-spacing: 0.02em;
       line-height: 1;
     }
@@ -179,7 +189,8 @@
     .panel {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 4px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
     }
 
     .panel-header {
@@ -188,12 +199,16 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      background: var(--surface2);
+      border-radius: 12px 12px 0 0;
     }
 
     .panel-title {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.2em;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
       color: var(--text-dim);
     }
@@ -213,9 +228,9 @@
     }
 
     label {
-      font-size: 0.72rem;
+      font-size: 0.68rem;
       color: var(--text-dim);
-      font-family: 'IBM Plex Mono', monospace;
+      font-family: 'JetBrains Mono', monospace;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       display: block;
@@ -225,20 +240,21 @@
     input,
     select {
       width: 100%;
-      background: var(--surface2);
+      background: var(--bg);
       border: 1px solid var(--border);
       color: var(--text);
       padding: 10px 12px;
-      border-radius: 3px;
-      font-family: 'IBM Plex Sans', sans-serif;
-      font-size: 0.88rem;
-      transition: border-color 0.15s;
+      border-radius: 7px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.87rem;
+      transition: border-color 0.15s, box-shadow 0.15s;
       outline: none;
     }
 
     input:focus,
     select:focus {
-      border-color: var(--accent-dim);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
     }
 
     select option {
@@ -246,25 +262,27 @@
     }
 
     .btn {
-      padding: 10px 20px;
+      padding: 10px 18px;
       border: none;
-      border-radius: 3px;
+      border-radius: 7px;
       cursor: pointer;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.78rem;
-      letter-spacing: 0.1em;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
       font-weight: 600;
       transition: all 0.15s;
     }
 
     .btn-primary {
-      background: var(--accent);
-      color: #0f1009;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(79, 110, 247, 0.3);
     }
 
     .btn-primary:hover {
-      background: var(--accent2);
+      box-shadow: 0 4px 14px rgba(79, 110, 247, 0.45);
+      transform: translateY(-1px);
     }
 
     .btn-danger {
@@ -286,12 +304,12 @@
 
     .btn-success:hover {
       background: var(--green);
-      color: #0f1009;
+      color: #0f1117;
     }
 
     .btn-sm {
       padding: 5px 10px;
-      font-size: 0.68rem;
+      font-size: 0.65rem;
     }
 
     .btn-full {
@@ -302,19 +320,27 @@
     .tabs {
       display: flex;
       border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .tabs::-webkit-scrollbar {
+      display: none;
     }
 
     .tab {
-      padding: 12px 20px;
+      padding: 12px 18px;
       cursor: pointer;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.68rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
       letter-spacing: 0.15em;
       text-transform: uppercase;
       color: var(--text-dim);
       border-bottom: 2px solid transparent;
       margin-bottom: -1px;
       transition: all 0.15s;
+      white-space: nowrap;
     }
 
     .tab.active {
@@ -342,8 +368,8 @@
     }
 
     th {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.63rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
       letter-spacing: 0.15em;
       text-transform: uppercase;
       color: var(--text-dim);
@@ -351,12 +377,14 @@
       border-bottom: 1px solid var(--border);
       text-align: left;
       white-space: nowrap;
+      background: var(--surface2);
     }
 
     td {
       padding: 10px 12px;
       border-bottom: 1px solid var(--border);
       vertical-align: middle;
+      font-size: 0.82rem;
     }
 
     tr:last-child td {
@@ -364,38 +392,42 @@
     }
 
     tr:hover td {
-      background: var(--surface2);
+      background: rgba(79, 110, 247, 0.04);
     }
 
     .badge {
       display: inline-block;
-      padding: 3px 8px;
-      border-radius: 2px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.63rem;
+      padding: 3px 9px;
+      border-radius: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
       letter-spacing: 0.05em;
       font-weight: 600;
       text-transform: uppercase;
     }
 
     .badge-pending {
-      background: rgba(224, 148, 58, 0.15);
+      background: rgba(221, 122, 27, 0.1);
       color: var(--orange);
+      border: 1px solid rgba(221, 122, 27, 0.25);
     }
 
     .badge-paid {
-      background: rgba(78, 203, 113, 0.15);
+      background: rgba(29, 184, 112, 0.1);
       color: var(--green);
+      border: 1px solid rgba(29, 184, 112, 0.25);
     }
 
     .badge-loan {
-      background: rgba(224, 92, 74, 0.15);
+      background: rgba(229, 62, 90, 0.1);
       color: var(--red);
+      border: 1px solid rgba(229, 62, 90, 0.25);
     }
 
     .badge-repay {
-      background: rgba(74, 184, 212, 0.15);
+      background: rgba(49, 130, 206, 0.1);
       color: var(--blue);
+      border: 1px solid rgba(49, 130, 206, 0.25);
     }
 
     .mono {
@@ -454,21 +486,21 @@
 
     .alert {
       padding: 10px 14px;
-      border-radius: 3px;
-      font-size: 0.82rem;
+      border-radius: 7px;
+      font-size: 0.8rem;
       margin-bottom: 12px;
       display: none;
     }
 
     .alert-success {
-      background: rgba(78, 203, 113, 0.12);
-      border: 1px solid rgba(78, 203, 113, 0.3);
+      background: rgba(29, 184, 112, 0.1);
+      border: 1px solid rgba(29, 184, 112, 0.3);
       color: var(--green);
     }
 
     .alert-error {
-      background: rgba(224, 92, 74, 0.12);
-      border: 1px solid rgba(224, 92, 74, 0.3);
+      background: rgba(229, 62, 90, 0.1);
+      border: 1px solid rgba(229, 62, 90, 0.3);
       color: var(--red);
     }
 
@@ -516,11 +548,12 @@
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.75);
+      background: rgba(0, 0, 0, 0.8);
       z-index: 100;
       display: none;
       align-items: center;
       justify-content: center;
+      padding: 16px;
     }
 
     .modal-overlay.open {
@@ -530,11 +563,12 @@
     .modal {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 4px;
-      width: 90%;
+      border-radius: 14px;
+      width: 100%;
       max-width: 560px;
       max-height: 90vh;
       overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
     }
 
     .modal-head {
@@ -557,11 +591,166 @@
       font-size: 1.2rem;
     }
 
-    @media(max-width:768px) {
+    /* ── CARD BASED LISTS (for mobile) ── */
+    .mobile-card-list {
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .mobile-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .m-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+
+    .m-card-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-size: 0.82rem;
+    }
+
+    .m-card-label {
+      color: var(--text-dim);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .m-card-val {
+      font-weight: 500;
+    }
+
+    .m-card-footer {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    /* ── MODIFIED UTILITIES ── */
+    .hide-mobile {
+      display: block;
+    }
+
+    .show-mobile {
+      display: none;
+    }
+
+    /* ── TABLET & MOBILE RESPONSIVE ── */
+    @media(max-width:900px) {
       .stats-grid {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media(max-width:660px) {
+      .hide-mobile {
+        display: none !important;
       }
 
+      .show-mobile {
+        display: block !important;
+      }
+
+      .mobile-card-list {
+        display: flex;
+      }
+
+      .table-wrap {
+        display: none;
+      }
+
+      /* Hide traditional tables */
+
+      body {
+        font-size: 14px;
+      }
+
+      .app {
+        padding: 0 12px 60px;
+      }
+
+      /* Header compact */
+      header {
+        background: var(--surface);
+        border-radius: 12px;
+        padding: 12px 16px;
+        margin-bottom: 20px;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .header-right {
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid var(--border);
+      }
+
+      /* Stats: 2 compact columns */
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .stat-card {
+        padding: 12px 10px;
+      }
+
+      .stat-value {
+        font-size: 1.15rem;
+      }
+
+      .stat-sub {
+        font-size: 0.62rem;
+      }
+
+      .stat-label {
+        font-size: 0.58rem;
+        margin-bottom: 6px;
+      }
+
+      /* Panel */
+      .panel-header {
+        padding: 12px 14px;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .tab-content {
+        padding: 12px;
+      }
+
+      /* Tabs scroll */
+      .tabs {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .tab {
+        padding: 10px 14px;
+        font-size: 0.65rem;
+        white-space: nowrap;
+      }
+
+      /* Forms */
       .form-row-2,
       .form-row-3 {
         grid-template-columns: 1fr;
@@ -570,11 +759,49 @@
       .two-panel {
         grid-template-columns: 1fr !important;
       }
+
+      /* worker table: prominence */
+      #workers-tbody td:nth-child(1) {
+        font-size: 0.88rem;
+        font-weight: 600;
+      }
+
+      /* Smaller buttons in tables */
+      .btn-sm {
+        padding: 4px 8px;
+        font-size: 0.6rem;
+      }
+
+      /* Summary boxes */
+      .summary-box {
+        font-size: 0.76rem;
+      }
+
+      /* Worker loan cards */
+      .worker-loan-card {
+        padding: 12px;
+      }
     }
 
-    @media(max-width:480px) {
+    /* ── SMALL PHONES ── */
+    @media(max-width:400px) {
       .stats-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+      }
+
+      .stat-value {
+        font-size: 1rem;
+      }
+
+      .logo {
+        font-size: 1rem;
+      }
+
+      /* Hide Amount col in activity too */
+      #activity-tbody td:nth-child(4),
+      table thead th:nth-child(4) {
+        font-size: 0.7rem;
       }
     }
   </style>
@@ -584,11 +811,12 @@
   <div class="noise"></div>
   <div class="app">
 
-    <header>
-      <div class="logo">Bill Management<span>Firewood Bill Management</span></div>
-      <div style="display:flex;gap:20px;align-items:center;">
+    <header
+      style="background:var(--surface);border-radius:14px;padding:16px 22px;box-shadow:var(--shadow);margin-bottom:24px;border:1px solid var(--border);">
+      <div class="logo">Firewood BMS<span>Bill Management System</span></div>
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
         <div class="header-date" id="headerDate"></div>
-        <button class="btn btn-sm" onclick="logout()" style="margin:0;">LOGOUT</button>
+        <button class="btn btn-sm btn-danger" onclick="logout()" style="margin:0;">LOGOUT</button>
       </div>
     </header>
 
@@ -643,8 +871,9 @@
               <div><label>Our Rate (LKR/kg)</label><input type="number" id="tx-rate-ours" value="9" min="0"
                   oninput="calcTx()"></div>
             </div>
-            <div class="form-row">
-              <div><label>Bill Due Date</label><input type="date" id="tx-due"></div>
+            <div class="form-row form-row-2">
+              <div><label>Bill Taking Date</label><input type="date" id="tx-date2"
+                  title="The date the bill was taken/recorded"></div>
             </div>
             <!-- Loan deduction — shown only when worker has outstanding loan -->
             <div id="tx-loan-section"
@@ -690,7 +919,7 @@
               <div class="summary-row"><span class="dim">Bill Amount</span><span class="orange" id="pay-bill-amount">LKR
                   0</span></div>
               <div class="summary-row"><span class="dim">Worker</span><span id="pay-bill-worker">-</span></div>
-              <div class="summary-row"><span class="dim">Due Date</span><span id="pay-bill-due">-</span></div>
+              <div class="summary-row"><span class="dim">Bill Taking Date</span><span id="pay-bill-due">-</span></div>
             </div>
             <div class="form-row form-row-2">
               <div><label>Amount Received (LKR)</label><input type="number" id="pay-amount" placeholder="40000"></div>
@@ -752,6 +981,8 @@
                 </tbody>
               </table>
             </div>
+            <!-- Mobile Card List for Workers -->
+            <div id="workers-mobile-list" class="mobile-card-list show-mobile"></div>
           </div>
         </div>
       </div>
@@ -781,7 +1012,7 @@
                 <th>Loan Deducted</th>
                 <th>Cash Paid Out</th>
                 <th>Profit</th>
-                <th>Due Date</th>
+                <th>Bill Date</th>
                 <th>Status</th>
               </tr>
             </thead>
@@ -792,6 +1023,8 @@
             </tbody>
           </table>
         </div>
+        <!-- Mobile Card List for Bills -->
+        <div id="bills-mobile-list" class="mobile-card-list show-mobile"></div>
       </div>
 
       <!-- LOANS -->
@@ -868,7 +1101,7 @@
       </div>
       <div class="table-wrap">
         <table>
-          <thead>
+          <thead id="activity-thead">
             <tr>
               <th>Time</th>
               <th>Type</th>
@@ -885,6 +1118,8 @@
           </tbody>
         </table>
       </div>
+      <!-- Mobile Card List for Activity -->
+      <div id="activity-mobile-list" class="mobile-card-list show-mobile"></div>
     </div>
   </div>
 
@@ -962,9 +1197,7 @@
 
     function setDates() {
       const t = new Date().toISOString().split('T')[0];
-      ['tx-date', 'pay-date', 'loan-date', 'repay-date'].forEach(id => { const e = document.getElementById(id); if (e) e.value = t; });
-      const due = new Date(); due.setDate(due.getDate() + 45);
-      document.getElementById('tx-due').value = due.toISOString().split('T')[0];
+      ['tx-date', 'tx-date2', 'pay-date', 'loan-date', 'repay-date'].forEach(id => { const e = document.getElementById(id); if (e) e.value = t; });
     }
 
     function startClock() {
@@ -996,7 +1229,7 @@
       state.bills.filter(b => b.status === 'pending').forEach(b => {
         const w = state.workers.find(x => x.id === b.workerId);
         const o = document.createElement('option'); o.value = b.id;
-        o.textContent = `#${b.id} — ${w ? w.name : '?'} — ${fmt(b.billValue)} — Due: ${b.dueDate || '?'}`;
+        o.textContent = `#${b.id} — ${w ? w.name : '?'} — ${fmt(b.billValue)} — Date: ${b.date || '?'}`;
         bs.appendChild(o);
       });
       if (cb) bs.value = cb;
@@ -1049,7 +1282,7 @@
       const rg = parseFloat(document.getElementById('tx-rate-govt').value) || 10;
       const ro = parseFloat(document.getElementById('tx-rate-ours').value) || 9;
       const date = document.getElementById('tx-date').value;
-      const due = document.getElementById('tx-due').value;
+      const billDate2 = document.getElementById('tx-date2').value;
       const rawDeduct = parseFloat(document.getElementById('tx-loan-deduct').value) || 0;
 
       if (!wid) return sa('alert-tx', 'Please select a worker', 1);
@@ -1067,8 +1300,7 @@
       const billData = {
         workerId: wid,
         kg,
-        date,
-        dueDate: due,
+        date: date || billDate2,
         rateGovt: rg,
         rateOurs: ro,
         loanDeducted: deduct > 0 ? deduct : 0
@@ -1099,7 +1331,7 @@
       const w = state.workers.find(x => x.id === b.workerId);
       document.getElementById('pay-bill-amount').textContent = fmt(b.billValue);
       document.getElementById('pay-bill-worker').textContent = w ? w.name : '?';
-      document.getElementById('pay-bill-due').textContent = b.dueDate || '-';
+      document.getElementById('pay-bill-due').textContent = b.date || '-';
       document.getElementById('pay-amount').value = b.billValue;
       d.style.display = 'block';
     }
@@ -1179,17 +1411,42 @@
 
     function renderWorkersTable() {
       const tb = document.getElementById('workers-tbody');
-      if (!state.workers.length) { tb.innerHTML = '<tr><td colspan="7" class="empty">No workers yet</td></tr>'; return; }
+      const ml = document.getElementById('workers-mobile-list');
+      if (!state.workers.length) {
+        const empty = '<tr><td colspan="7" class="empty">No workers yet</td></tr>';
+        tb.innerHTML = empty;
+        ml.innerHTML = '<div class="empty">No workers yet</div>';
+        return;
+      }
+
       tb.innerHTML = state.workers.map(w => {
         const kg = state.bills.filter(b => b.workerId === w.id).reduce((s, b) => s + b.kg, 0);
         const bc = state.bills.filter(b => b.workerId === w.id).length;
         const lb = loanBalance(w.id);
         return `<tr>
-      <td class="bold">${w.name}</td><td class="dim">${w.area || '-'}</td><td class="mono dim">${w.phone || '-'}</td>
-      <td class="mono">${fmtN(kg)} KG</td><td class="mono">${bc}</td>
-      <td class="mono ${lb > 0 ? 'red' : 'green'}">${lb > 0 ? fmt(lb) : '✓ Clear'}</td>
-      <td><button class="btn btn-sm btn-success" onclick="viewWorker(${w.id})">View</button></td>
-    </tr>`;
+          <td class="bold">${w.name}</td><td class="dim">${w.area || '-'}</td><td class="mono dim">${w.phone || '-'}</td>
+          <td class="mono">${fmtN(kg)} KG</td><td class="mono">${bc}</td>
+          <td class="mono ${lb > 0 ? 'red' : 'green'}">${lb > 0 ? fmt(lb) : '✓ Clear'}</td>
+          <td><button class="btn btn-sm btn-success" onclick="viewWorker(${w.id})">View</button></td>
+        </tr>`;
+      }).join('');
+
+      ml.innerHTML = state.workers.map(w => {
+        const kg = state.bills.filter(b => b.workerId === w.id).reduce((s, b) => s + b.kg, 0);
+        const lb = loanBalance(w.id);
+        return `<div class="mobile-card">
+          <div class="m-card-header">
+            <span class="bold">${w.name}</span>
+            <span class="tag ${lb > 0 ? 'tag-pending' : 'tag-paid'}" style="font-size:0.6rem;">${lb > 0 ? 'Owes Loan' : 'Cleared'}</span>
+          </div>
+          <div class="m-card-row"><span class="m-card-label">Area</span><span class="m-card-val">${w.area || '-'}</span></div>
+          <div class="m-card-row"><span class="m-card-label">Phone</span><span class="m-card-val mono">${w.phone || '-'}</span></div>
+          <div class="m-card-row"><span class="m-card-label">Total Supply</span><span class="m-card-val mono">${fmtN(kg)} KG</span></div>
+          <div class="m-card-row"><span class="m-card-label">Loan Balance</span><span class="m-card-val ${lb > 0 ? 'red' : 'green'}">${fmt(lb)}</span></div>
+          <div class="m-card-footer">
+            <button class="btn btn-sm btn-success" onclick="viewWorker(${w.id})">Full Details</button>
+          </div>
+        </div>`;
       }).join('');
     }
 
@@ -1200,24 +1457,45 @@
       let bills = [...state.bills].reverse();
       if (sf !== 'all') bills = bills.filter(b => b.status === sf);
       if (wf !== 'all') bills = bills.filter(b => b.workerId === parseInt(wf));
+
       const tb = document.getElementById('bills-tbody');
-      if (!bills.length) { tb.innerHTML = '<tr><td colspan="11" class="empty">No bills found</td></tr>'; return; }
+      const ml = document.getElementById('bills-mobile-list');
+
+      if (!bills.length) {
+        tb.innerHTML = '<tr><td colspan="11" class="empty">No bills found</td></tr>';
+        ml.innerHTML = '<div class="empty">No bills found</div>';
+        return;
+      }
+
       tb.innerHTML = bills.map(b => {
         const w = state.workers.find(x => x.id === b.workerId);
-        const ov = b.status === 'pending' && b.dueDate && new Date(b.dueDate) < new Date();
         const ded = b.loanDeducted || 0;
         const cashPaid = b.cashPaid != null ? b.cashPaid : b.wePaid;
         return `<tr>
-      <td class="mono dim">#${b.id}</td><td class="mono">${b.date}</td>
-      <td class="bold">${w ? w.name : '?'}</td><td class="mono">${fmtN(b.kg)}</td>
-      <td class="mono orange">${fmt(b.billValue)}</td>
-      <td class="mono dim">${fmt(b.wePaid)}</td>
-      <td class="mono ${ded > 0 ? 'red' : 'dim'}">${ded > 0 ? '− ' + fmt(ded) : '-'}</td>
-      <td class="mono accent bold">${fmt(cashPaid)}</td>
-      <td class="mono green">${fmt(b.profit)}</td>
-      <td class="mono ${ov ? 'red bold' : 'dim'}">${b.dueDate || '-'}${ov ? ' ⚠' : ''}</td>
-      <td><span class="badge badge-${b.status}">${b.status}</span></td>
-    </tr>`;
+          <td class="mono dim">#${b.id}</td><td class="mono">${b.date}</td>
+          <td class="bold">${w ? w.name : '?'}</td><td class="mono">${fmtN(b.kg)}</td>
+          <td class="mono orange">${fmt(b.billValue)}</td>
+          <td class="mono dim">${fmt(b.wePaid)}</td>
+          <td class="mono ${ded > 0 ? 'red' : 'dim'}">${ded > 0 ? '− ' + fmt(ded) : '-'}</td>
+          <td class="mono accent bold">${fmt(cashPaid)}</td>
+          <td class="mono green">${fmt(b.profit)}</td>
+          <td class="mono dim">${b.date || '-'}</td>
+          <td><span class="badge badge-${b.status}">${b.status}</span></td>
+        </tr>`;
+      }).join('');
+
+      ml.innerHTML = bills.map(b => {
+        const w = state.workers.find(x => x.id === b.workerId);
+        return `<div class="mobile-card">
+          <div class="m-card-header">
+            <span class="bold">#${b.id} — ${w ? w.name : '?'}</span>
+            <span class="badge badge-${b.status}">${b.status}</span>
+          </div>
+          <div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val mono">${b.date}</span></div>
+          <div class="m-card-row"><span class="m-card-label">Weight</span><span class="m-card-val mono">${fmtN(b.kg)} KG</span></div>
+          <div class="m-card-row"><span class="m-card-label">Bill Value</span><span class="m-card-val orange mono">${fmt(b.billValue)}</span></div>
+          <div class="m-card-row"><span class="m-card-label">Cash Paid Out</span><span class="m-card-val accent bold mono">${fmt(b.cashPaid || b.wePaid)}</span></div>
+        </div>`;
       }).join('');
     }
 
@@ -1381,19 +1659,44 @@
 
     function renderActivity() {
       const tb = document.getElementById('activity-tbody');
+      const ml = document.getElementById('activity-mobile-list');
       document.getElementById('activityCount').textContent = state.activity.length + ' records';
-      if (!state.activity.length) { tb.innerHTML = '<tr><td colspan="6" class="empty">No activity yet</td></tr>'; return; }
+
+      if (!state.activity.length) {
+        tb.innerHTML = '<tr><td colspan="6" class="empty">No activity yet</td></tr>';
+        ml.innerHTML = '<div class="empty">No activity yet</div>';
+        return;
+      }
+
       const bc = { bill: 'pending', payment: 'paid', loan: 'loan', repay: 'repay', worker: 'pending', cash: 'paid' };
-      tb.innerHTML = state.activity.slice(0, 40).map(a => {
+      const icons = { bill: '🧾', payment: '💰', loan: '💸', repay: '📥', worker: '👤', cash: '💵' };
+
+      const items = state.activity.slice(0, 40);
+
+      tb.innerHTML = items.map(a => {
         const d = new Date(a.time);
         const ts = d.toLocaleDateString('en-LK') + ' ' + d.toLocaleTimeString('en-LK', { hour: '2-digit', minute: '2-digit' });
         return `<tr>
-      <td class="mono dim" style="font-size:0.75rem;">${ts}</td>
-      <td><span class="badge badge-${bc[a.type] || 'pending'}">${a.type}</span></td>
-      <td class="bold">${a.worker}</td><td class="dim">${a.detail}</td>
-      <td class="mono">${a.amount ? fmt(a.amount) : '-'}</td>
-      <td class="mono ${a.cashEffect > 0 ? 'green' : a.cashEffect < 0 ? 'red' : 'dim'}">${a.cashEffect > 0 ? '+' : ''}${a.cashEffect !== 0 && a.cashEffect != null ? fmt(a.cashEffect) : '-'}</td>
-    </tr>`;
+          <td class="mono dim" style="font-size:0.75rem;">${ts}</td>
+          <td><span class="badge badge-${bc[a.type] || 'pending'}">${a.type}</span></td>
+          <td class="bold">${a.worker}</td><td class="dim">${a.detail}</td>
+          <td class="mono">${a.amount ? fmt(a.amount) : '-'}</td>
+          <td class="mono ${a.cashEffect > 0 ? 'green' : a.cashEffect < 0 ? 'red' : 'dim'}">${a.cashEffect > 0 ? '+' : ''}${a.cashEffect !== 0 && a.cashEffect != null ? fmt(a.cashEffect) : '-'}</td>
+        </tr>`;
+      }).join('');
+
+      ml.innerHTML = items.map(a => {
+        const d = new Date(a.time);
+        const ts = d.toLocaleDateString('en-LK') + ' ' + d.toLocaleTimeString('en-LK', { hour: '2-digit', minute: '2-digit' });
+        return `<div class="mobile-card">
+          <div class="m-card-header">
+            <span>${icons[a.type] || '⚡'} <span class="bold" style="text-transform:uppercase; font-size:0.7rem;">${a.type}</span></span>
+            <span class="mono dim" style="font-size:0.65rem;">${ts}</span>
+          </div>
+          <div class="m-card-row"><span class="m-card-label">Worker</span><span class="m-card-val bold">${a.worker}</span></div>
+          <div class="m-card-row"><span class="m-card-label">Detail</span><span class="m-card-val">${a.detail}</span></div>
+          <div class="m-card-row"><span class="m-card-label">Effect</span><span class="m-card-val mono ${a.cashEffect > 0 ? 'green' : a.cashEffect < 0 ? 'red' : 'dim'}">${a.cashEffect > 0 ? '+' : ''}${a.cashEffect !== 0 && a.cashEffect != null ? fmt(a.cashEffect) : '-'}</span></div>
+        </div>`;
       }).join('');
     }
 

@@ -6,7 +6,7 @@ const router = express.Router();
 // Get all bills
 router.get('/', async (req, res) => {
   try {
-    const bills = await Bill.find({ userId: req.userId }).sort({ dueDate: 1 });
+    const bills = await Bill.find({ userId: req.userId }).sort({ billDate: -1 });
     res.json({
       message: 'Bills retrieved successfully',
       data: bills
@@ -37,9 +37,9 @@ router.get('/:id', async (req, res) => {
 // Create bill
 router.post('/', async (req, res) => {
   try {
-    const { name, amount, dueDate, category, status, description } = req.body;
+    const { name, amount, billDate, category, status, description } = req.body;
 
-    if (!name || !amount || !dueDate || !category) {
+    if (!name || !amount || !billDate || !category) {
       return res.status(400).json({ message: 'Required fields missing' });
     }
 
@@ -47,7 +47,7 @@ router.post('/', async (req, res) => {
       userId: req.userId,
       name,
       amount,
-      dueDate,
+      billDate,
       category,
       status: status || 'Pending',
       description: description || ''
@@ -67,7 +67,7 @@ router.post('/', async (req, res) => {
 // Update bill
 router.put('/:id', async (req, res) => {
   try {
-    const { name, amount, dueDate, category, status, description } = req.body;
+    const { name, amount, billDate, category, status, description } = req.body;
 
     const bill = await Bill.findOne({ _id: req.params.id, userId: req.userId });
     if (!bill) {
@@ -76,7 +76,7 @@ router.put('/:id', async (req, res) => {
 
     bill.name = name || bill.name;
     bill.amount = amount || bill.amount;
-    bill.dueDate = dueDate || bill.dueDate;
+    bill.billDate = billDate || bill.billDate;
     bill.category = category || bill.category;
     bill.status = status || bill.status;
     bill.description = description !== undefined ? description : bill.description;

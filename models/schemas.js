@@ -38,7 +38,7 @@ const billSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
-  dueDate: {
+  billDate: {
     type: Date,
     required: true
   },

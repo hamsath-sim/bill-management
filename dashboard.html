@@ -1,23 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bill Management - Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <title>Bill Management — Dashboard</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
+        rel="stylesheet">
     <style>
         :root {
-            --bg: #f8f9fa;
+            --bg: #f8fafc;
             --surface: #ffffff;
-            --surface2: #f5f6f8;
-            --border: #e1e4e8;
-            --accent: #5b7cff;
-            --accent2: #4a68ff;
-            --text: #1f2937;
-            --text-dim: #6b7280;
-            --red: #ff4757;
-            --green: #2ed573;
-            --orange: #ffa502;
+            --surface2: #f1f5f9;
+            --border: #e2e8f0;
+            --accent: #3b82f6;
+            --accent2: #2563eb;
+            --accent-dim: #94a3b8;
+            --accent-glow: rgba(59, 130, 246, 0.1);
+            --text: #0f172a;
+            --text-dim: #64748b;
+            --red: #ef4444;
+            --green: #22c55e;
+            --orange: #f59e0b;
+            --blue: #0ea5e9;
+            --purple: #8b5cf6;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --radius: 12px;
         }
 
         * {
@@ -26,179 +37,198 @@
             box-sizing: border-box;
         }
 
+        html {
+            font-size: 16px;
+        }
+
         body {
             background: var(--bg);
             color: var(--text);
-            font-family: 'IBM Plex Sans', sans-serif;
+            font-family: 'Inter', sans-serif;
             min-height: 100vh;
-            padding: 20px;
         }
 
+        /* ── LAYOUT ── */
         .app {
-            max-width: 1200px;
+            max-width: 1280px;
             margin: 0 auto;
+            padding: 0 16px 60px;
         }
 
+        /* ── HEADER ── */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 0;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 30px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px 22px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .logo {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 1.8rem;
-            letter-spacing: 0.05em;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 0.03em;
             color: var(--accent);
+        }
+
+        .logo span {
+            color: var(--text-dim);
+            font-size: 0.7rem;
+            display: block;
+            font-weight: 400;
+            letter-spacing: 0.2em;
+            margin-top: 2px;
         }
 
         .header-right {
             display: flex;
-            gap: 20px;
+            gap: 12px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
-        .user-btn {
-            width: 36px;
-            height: 36px;
+        .user-pill {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 6px 14px 6px 8px;
+        }
+
+        .user-avatar {
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
-            background: var(--accent);
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
             color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-            transition: background 0.15s;
-        }
-        .user-btn:hover {
-            background: var(--accent2);
-        }
-        .user-modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-        .user-modal-overlay.open {
-            display: flex;
-        }
-        .user-modal {
-            background: #fff;
-            color: #222;
-            border-radius: 8px;
-            min-width: 300px;
-            max-width: 90vw;
-            padding: 32px 28px 20px 28px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-            position: relative;
-        }
-        .user-modal .close-btn {
-            position: absolute;
-            top: 10px;
-            right: 14px;
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            color: #888;
-            cursor: pointer;
-        }
-        .user-modal .close-btn:hover {
-            color: var(--red);
-        }
-        .user-modal .user-modal-title {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: var(--accent2);
-        }
-        .user-modal .user-modal-row {
-            margin-bottom: 8px;
-            font-size: 0.98rem;
         }
 
-        .user-info {
-            text-align: right;
-        }
-
-        .user-name {
+        .user-name-text {
+            font-size: 0.82rem;
             font-weight: 500;
-            font-size: 0.9rem;
+            color: var(--text);
         }
 
-        .user-email {
-            font-size: 0.75rem;
+        .user-email-text {
+            font-size: 0.68rem;
             color: var(--text-dim);
-            font-family: 'IBM Plex Mono', monospace;
+            font-family: 'JetBrains Mono', monospace;
         }
 
         .btn-logout {
-            padding: 8px 16px;
-            background: var(--red);
-            color: #fff;
-            border: none;
-            border-radius: 3px;
+            padding: 7px 14px;
+            background: transparent;
+            border: 1px solid var(--red);
+            color: var(--red);
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-weight: 600;
             transition: all 0.15s;
+            letter-spacing: 0.05em;
+            font-family: 'JetBrains Mono', monospace;
         }
 
         .btn-logout:hover {
-            background: #ff3838;
+            background: var(--red);
+            color: #fff;
         }
 
+        /* ── STATS ── */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-bottom: 30px;
+            gap: 14px;
+            margin-bottom: 28px;
         }
 
         .stat-card {
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 3px;
+            border-radius: 12px;
             padding: 20px;
+            box-shadow: var(--shadow);
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 6px 20px rgba(79, 110, 247, 0.15);
+            transform: translateY(-3px);
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .stat-card.c1::after {
+            background: linear-gradient(90deg, var(--accent), var(--blue));
+        }
+
+        .stat-card.c2::after {
+            background: linear-gradient(90deg, var(--orange), var(--red));
+        }
+
+        .stat-card.c3::after {
+            background: linear-gradient(90deg, var(--red), var(--purple));
+        }
+
+        .stat-card.c4::after {
+            background: linear-gradient(90deg, var(--green), var(--blue));
+        }
+
+        .stat-icon {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
         }
 
         .stat-label {
-            font-family: 'IBM Plex Mono', monospace;
             font-size: 0.65rem;
             color: var(--text-dim);
             text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 8px;
+            letter-spacing: 0.15em;
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 6px;
         }
 
         .stat-value {
-            font-size: 1.8rem;
-            font-weight: 600;
-            margin: 5px 0;
+            font-size: 1.6rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
         }
 
-        .stat-value.cash {
+        .stat-value.c1 {
             color: var(--accent);
         }
 
-        .stat-value.bills {
+        .stat-value.c2 {
             color: var(--orange);
         }
 
-        .stat-value.loans {
+        .stat-value.c3 {
             color: var(--red);
         }
 
-        .stat-value.profit {
+        .stat-value.c4 {
             color: var(--green);
         }
 
@@ -208,35 +238,41 @@
             margin-top: 5px;
         }
 
+        /* ── PANELS ── */
         .panel {
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 3px;
+            border-radius: 12px;
             margin-bottom: 20px;
+            box-shadow: var(--shadow);
         }
 
         .panel-header {
             padding: 15px 20px;
             border-bottom: 1px solid var(--border);
             background: var(--surface2);
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
         .panel-title {
-            font-family: 'IBM Plex Mono', monospace;
             font-size: 0.75rem;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
             font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            font-family: 'JetBrains Mono', monospace;
         }
 
-        .panel-content {
-            padding: 20px;
-        }
-
+        /* ── FORM ── */
         .form-row {
             display: grid;
-            gap: 15px;
-            margin-bottom: 15px;
+            gap: 14px;
+            margin-bottom: 14px;
         }
 
         .form-row-2 {
@@ -248,30 +284,39 @@
         }
 
         label {
-            font-family: 'IBM Plex Mono', monospace;
             font-size: 0.7rem;
             color: var(--text-dim);
             text-transform: uppercase;
             letter-spacing: 0.1em;
             display: block;
             margin-bottom: 5px;
+            font-family: 'JetBrains Mono', monospace;
         }
 
-        input, select, textarea {
+        input,
+        select,
+        textarea {
             width: 100%;
             background: var(--surface2);
             border: 1px solid var(--border);
             color: var(--text);
-            padding: 8px 10px;
-            border-radius: 3px;
-            font-family: 'IBM Plex Sans', sans-serif;
+            padding: 9px 11px;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
             font-size: 0.85rem;
             outline: none;
-            transition: border-color 0.15s;
+            transition: border-color 0.15s, box-shadow 0.15s;
         }
 
-        input:focus, select:focus, textarea:focus {
+        input:focus,
+        select:focus,
+        textarea:focus {
             border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        select option {
+            background: var(--surface2);
         }
 
         textarea {
@@ -279,26 +324,29 @@
             min-height: 80px;
         }
 
+        /* ── BUTTONS ── */
         .btn {
-            padding: 8px 16px;
+            padding: 10px 18px;
             border: none;
-            border-radius: 3px;
+            border-radius: 7px;
             cursor: pointer;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.7rem;
-            letter-spacing: 0.1em;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 0.08em;
             text-transform: uppercase;
             font-weight: 600;
             transition: all 0.15s;
         }
 
         .btn-primary {
-            background: var(--accent);
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
             color: #fff;
+            box-shadow: 0 2px 8px rgba(79, 110, 247, 0.25);
         }
 
         .btn-primary:hover {
-            background: var(--accent2);
+            box-shadow: 0 4px 14px rgba(79, 110, 247, 0.4);
+            transform: translateY(-1px);
         }
 
         .btn-small {
@@ -307,173 +355,397 @@
         }
 
         .btn-danger {
+            background: transparent;
+            border: 1px solid var(--red);
+            color: var(--red);
+        }
+
+        .btn-danger:hover {
             background: var(--red);
             color: #fff;
         }
 
-        .btn-danger:hover {
-            background: #ff3838;
+        .btn-success {
+            background: transparent;
+            border: 1px solid var(--green);
+            color: var(--green);
         }
 
+        .btn-success:hover {
+            background: var(--green);
+            color: #0f1117;
+        }
+
+        /* ── TABLE ── */
         .table-container {
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.85rem;
-        }
-
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
+            font-size: 0.83rem;
+            min-width: 500px;
         }
 
         th {
             background: var(--surface2);
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.7rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.62rem;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
-            font-weight: 600;
+            letter-spacing: 0.12em;
+            color: var(--text-dim);
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+            white-space: nowrap;
         }
 
-        tr:hover {
-            background: var(--surface2);
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
         }
 
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: rgba(108, 143, 255, 0.04);
+        }
+
+        /* ── BADGES ── */
         .tag {
             display: inline-block;
-            padding: 4px 8px;
-            border-radius: 3px;
-            font-size: 0.65rem;
+            padding: 3px 9px;
+            border-radius: 20px;
+            font-size: 0.63rem;
             font-weight: 600;
             text-transform: capitalize;
+            font-family: 'JetBrains Mono', monospace;
         }
 
         .tag-pending {
-            background: #fff3cd;
-            color: #856404;
+            background: rgba(221, 122, 27, 0.1);
+            color: var(--orange);
+            border: 1px solid rgba(221, 122, 27, 0.25);
+            border-radius: 20px;
         }
 
         .tag-paid {
-            background: #d4edda;
-            color: #155724;
+            background: rgba(29, 184, 112, 0.1);
+            color: var(--green);
+            border: 1px solid rgba(29, 184, 112, 0.25);
+            border-radius: 20px;
         }
 
         .tag-overdue {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .amount {
-            font-weight: 600;
-        }
-
-        .amount.positive {
-            color: var(--green);
-        }
-
-        .amount.negative {
+            background: rgba(229, 62, 90, 0.1);
             color: var(--red);
+            border: 1px solid rgba(229, 62, 90, 0.25);
+            border-radius: 20px;
         }
 
-        .action-buttons {
-            display: flex;
-            gap: 6px;
-        }
-
-        .error-msg {
-            color: var(--red);
-            font-size: 0.7rem;
-            margin-top: 4px;
+        /* ── MESSAGES ── */
+        .msg {
+            font-size: 0.75rem;
+            margin-top: 8px;
+            padding: 8px 12px;
+            border-radius: 6px;
             display: none;
         }
 
-        .error-msg.show {
+        .msg.show {
             display: block;
         }
 
-        .success-msg {
+        .msg-error {
+            background: rgba(255, 92, 106, 0.1);
+            border: 1px solid rgba(255, 92, 106, 0.3);
+            color: var(--red);
+        }
+
+        .msg-success {
+            background: rgba(62, 220, 138, 0.1);
+            border: 1px solid rgba(62, 220, 138, 0.3);
             color: var(--green);
-            font-size: 0.7rem;
-            margin-bottom: 10px;
-            display: none;
-        }
-
-        .success-msg.show {
-            display: block;
         }
 
         .loading {
             display: none;
             color: var(--text-dim);
-            font-size: 0.7rem;
+            font-size: 0.72rem;
+            margin-top: 8px;
         }
 
         .loading.show {
             display: inline;
         }
 
-        @media (max-width: 768px) {
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-            .form-row-2, .form-row-3 { grid-template-columns: 1fr; }
-            th, td { padding: 8px; font-size: 0.75rem; }
+        /* ── ACTION BUTTONS ── */
+        .action-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
         }
+
+        /* ── MODAL ── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 16px;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 440px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-head {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: color 0.15s;
+        }
+
+        .close-btn:hover {
+            color: var(--red);
+        }
+
+        .modal-row {
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+        }
+
+        .modal-row b {
+            color: var(--text-dim);
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .form-row-2,
+            .form-row-3 {
+                grid-template-columns: 1fr;
+            }
+
+            th,
+            td {
+                padding: 8px;
+                font-size: 0.75rem;
+            }
+
+            .panel-content {
+                padding: 14px;
+            }
+        }
+
+        /* ── CARD BASED LISTS (for mobile) ── */
+        .mobile-card-list {
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .mobile-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .m-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+        }
+
+        .m-card-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 0.82rem;
+        }
+
+        .m-card-label {
+            color: var(--text-dim);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .hide-mobile {
+            display: block;
+        }
+
+        .show-mobile {
+            display: none;
+        }
+
+        @media(max-width: 660px) {
+            .hide-mobile {
+                display: none !important;
+            }
+
+            .show-mobile {
+                display: block !important;
+            }
+
+            .mobile-card-list {
+                display: flex;
+                padding: 12px;
+            }
+
+            .table-wrap {
+                display: none;
+            }
+
+            .dashboard {
+                padding: 12px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .card {
+                padding: 12px;
+            }
+        }
+
+        @media(max-width: 440px) {
+            .header-actions {
+                flex-direction: column;
+                gap: 8px;
+                align-items: stretch;
+                width: 100%;
+            }
+
+            .btn {
+                justify-content: center;
+            }
+        }
+
         @media (max-width: 480px) {
-            .stats-grid { grid-template-columns: 1fr; }
-            .header-right { flex-direction: column; }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-right {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            body {
+                padding: 12px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .logo {
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="app">
         <header>
-            <div class="logo">BILL<br><span style="font-size:0.6rem; color:var(--text-dim);">MANAGEMENT</span></div>
+            <div class="logo">BILL MGMT <span>Management System</span></div>
             <div class="header-right">
-                <div class="user-info">
-                    <div class="user-name" id="userName">User</div>
-                    <div class="user-email" id="userEmail">user@example.com</div>
+                <div class="user-pill">
+                    <div class="user-avatar" id="userInitial">U</div>
+                    <div>
+                        <div class="user-name-text" id="userName">User</div>
+                        <div class="user-email-text" id="userEmail">—</div>
+                    </div>
                 </div>
-                <button class="user-btn" id="userBtn" title="Account"><span id="userBtnInitial">U</span></button>
                 <button class="btn-logout" onclick="logout()">Logout</button>
             </div>
         </header>
 
-        <!-- Stats Grid -->
+        <!-- Stats -->
         <div class="stats-grid">
-            <div class="stat-card cash">
+            <div class="stat-card c1">
+                <div class="stat-icon">💰</div>
                 <div class="stat-label">Total Cash</div>
-                <div class="stat-value cash" id="totalCash">$0.00</div>
+                <div class="stat-value c1" id="totalCash">LKR 0</div>
                 <div class="stat-sub">Available Balance</div>
             </div>
-
-            <div class="stat-card bills">
-                <div class="stat-label">Total Bills</div>
-                <div class="stat-value bills" id="totalBills">$0.00</div>
+            <div class="stat-card c2">
+                <div class="stat-icon">🧾</div>
+                <div class="stat-label">Pending Bills</div>
+                <div class="stat-value c2" id="totalBills">LKR 0</div>
                 <div class="stat-sub">Outstanding</div>
             </div>
-
-            <div class="stat-card loans">
-                <div class="stat-label">Total Loans</div>
-                <div class="stat-value loans" id="totalLoans">$0.00</div>
-                <div class="stat-sub">Due Amount</div>
+            <div class="stat-card c3">
+                <div class="stat-icon">📋</div>
+                <div class="stat-label">Total Bills</div>
+                <div class="stat-value c3" id="totalLoans">LKR 0</div>
+                <div class="stat-sub">All time</div>
             </div>
-
-            <div class="stat-card profit">
+            <div class="stat-card c4">
+                <div class="stat-icon">📈</div>
                 <div class="stat-label">Net Balance</div>
-                <div class="stat-value profit" id="netBalance">$0.00</div>
-                <div class="stat-sub">Calculated</div>
+                <div class="stat-value c4" id="netBalance">LKR 0</div>
+                <div class="stat-sub">Cash minus pending</div>
             </div>
         </div>
 
-        <!-- Add Bill Form -->
+        <!-- Add Bill -->
         <div class="panel">
-            <div class="panel-header">
-                <div class="panel-title">+ Add Bill</div>
-            </div>
+            <div class="panel-header"><span class="panel-title">+ Add Bill</span></div>
             <div class="panel-content">
                 <div class="form-row form-row-2">
                     <div>
@@ -481,13 +753,13 @@
                         <input type="text" id="billName" placeholder="e.g., Monthly Rent" required>
                     </div>
                     <div>
-                        <label for="billAmount">Amount ($)</label>
+                        <label for="billAmount">Amount (LKR)</label>
                         <input type="number" id="billAmount" placeholder="0.00" step="0.01" required>
                     </div>
                 </div>
                 <div class="form-row form-row-3">
                     <div>
-                        <label for="billDate">Due Date</label>
+                        <label for="billDate">Bill Taking Date</label>
                         <input type="date" id="billDate" required>
                     </div>
                     <div>
@@ -517,49 +789,62 @@
                         <textarea id="billDescription" placeholder="Add notes..."></textarea>
                     </div>
                 </div>
-                <button type="button" class="btn btn-primary" onclick="handleAddBill(event)">Add Bill</button>
-                <div class="loading" id="addBillLoading">Adding...</div>
-                <div class="error-msg" id="addBillError"></div>
+                <button class="btn btn-primary" onclick="handleAddBill()">Add Bill</button>
+                <span class="loading" id="addBillLoading">Adding...</span>
+                <div class="msg msg-error" id="addBillError"></div>
             </div>
         </div>
 
         <!-- Bills Table -->
         <div class="panel">
             <div class="panel-header">
-                <div class="panel-title">Bills Record</div>
+                <span class="panel-title">Bills Record</span>
+                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                    <input type="text" id="billSearch" placeholder="🔍 Search bills..." oninput="filterBills()"
+                        style="width:180px;padding:6px 10px;font-size:0.78rem;">
+                    <select id="billStatusFilter" onchange="filterBills()"
+                        style="width:130px;padding:6px 10px;font-size:0.78rem;">
+                        <option value="all">All Status</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Paid">Paid</option>
+                    </select>
+                    <span id="billCount"
+                        style="font-size:0.7rem;color:var(--text-dim);font-family:'JetBrains Mono',monospace;white-space:nowrap;">0
+                        bills</span>
+                </div>
             </div>
             <div class="panel-content">
-                <div class="table-container">
-                    <table>
+                <div class="table-wrap">
+                    <table style="width:100%;border-collapse:collapse;">
                         <thead>
                             <tr>
-                                <th>Bill Name</th>
+                                <th>Bill Details</th>
                                 <th>Category</th>
                                 <th>Amount</th>
-                                <th>Due Date</th>
+                                <th>Date</th>
                                 <th>Status</th>
-                                <th>Actions</th>
+                                <th style="text-align:right;">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="billsTable">
                             <tr>
-                                <td colspan="6" style="text-align: center; color: var(--text-dim);">Loading bills...</td>
+                                <td colspan="6" style="text-align:center;color:var(--text-dim);padding:30px;">Loading
+                                    bills...</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+                <div id="bills-mobile-list" class="mobile-card-list show-mobile"></div>
             </div>
         </div>
 
-        <!-- Add Cash Form -->
+        <!-- Add Cash -->
         <div class="panel">
-            <div class="panel-header">
-                <div class="panel-title">+ Add Cash</div>
-            </div>
+            <div class="panel-header"><span class="panel-title">+ Add Cash</span></div>
             <div class="panel-content">
                 <div class="form-row form-row-2">
                     <div>
-                        <label for="cashAmount">Amount ($)</label>
+                        <label for="cashAmount">Amount (LKR)</label>
                         <input type="number" id="cashAmount" placeholder="0.00" step="0.01" required>
                     </div>
                     <div>
@@ -573,16 +858,19 @@
                         <input type="text" id="cashDescription" placeholder="e.g., Salary" required>
                     </div>
                 </div>
-                <button type="button" class="btn btn-primary" onclick="handleAddCash(event)">Add Cash</button>
-                <div class="loading" id="addCashLoading">Adding...</div>
-                <div class="error-msg" id="addCashError"></div>
+                <button class="btn btn-primary" onclick="handleAddCash()">Add Cash</button>
+                <span class="loading" id="addCashLoading">Adding...</span>
+                <div class="msg msg-error" id="addCashError"></div>
             </div>
         </div>
 
         <!-- Cash Table -->
         <div class="panel">
             <div class="panel-header">
-                <div class="panel-title">Cash Record</div>
+                <span class="panel-title">Cash Record</span>
+                <span id="cashCount"
+                    style="font-size:0.7rem;color:var(--text-dim);font-family:'JetBrains Mono',monospace;">0
+                    records</span>
             </div>
             <div class="panel-content">
                 <div class="table-container">
@@ -597,7 +885,8 @@
                         </thead>
                         <tbody id="cashTable">
                             <tr>
-                                <td colspan="4" style="text-align: center; color: var(--text-dim);">Loading cash records...</td>
+                                <td colspan="4" style="text-align:center;color:var(--text-dim);padding:30px;">Loading
+                                    cash records...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -606,161 +895,170 @@
         </div>
     </div>
 
-    <script>
-                // User modal
-                function openUserModal() {
-                    const overlay = document.getElementById('userModalOverlay');
-                    overlay.classList.add('open');
-                }
-                function closeUserModal() {
-                    const overlay = document.getElementById('userModalOverlay');
-                    overlay.classList.remove('open');
-                }
-        const API_URL = '/api';
+    <!-- User Modal -->
+    <div class="modal-overlay" id="userModalOverlay">
+        <div class="modal">
+            <div class="modal-head">
+                <span class="modal-title">Account Details</span>
+                <button class="close-btn" id="userModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-row"><b>Name</b><br><span id="userModalName">-</span></div>
+                <div class="modal-row"><b>Email</b><br><span id="userModalEmail">-</span></div>
+                <div class="modal-row"><b>Joined</b><br><span id="userModalCreated">-</span></div>
+            </div>
+        </div>
+    </div>
 
-        // Check authentication
+    <script>
+        const API_URL = '/api';
+        let allBills = [];
+
         function checkAuth() {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                window.location.href = 'login.html';
-                return;
-            }
+            if (!localStorage.getItem('token')) window.location.href = 'login.html';
         }
 
-        // Load user data
         function loadUserData() {
             const user = JSON.parse(localStorage.getItem('user') || '{}');
             document.getElementById('userName').textContent = user.name || 'User';
             document.getElementById('userEmail').textContent = user.email || '';
-            // Set user initial on button
-            const initial = (user.name && user.name[0]) ? user.name[0].toUpperCase() : 'U';
-            document.getElementById('userBtnInitial').textContent = initial;
-            // Fill modal
+            document.getElementById('userInitial').textContent = (user.name && user.name[0]) ? user.name[0].toUpperCase() : 'U';
             document.getElementById('userModalName').textContent = user.name || '-';
             document.getElementById('userModalEmail').textContent = user.email || '-';
-            document.getElementById('userModalCreated').textContent = user.createdAt ? (new Date(user.createdAt)).toLocaleDateString() : '-';
+            document.getElementById('userModalCreated').textContent = user.createdAt ? new Date(user.createdAt).toLocaleDateString() : '-';
         }
 
-        // Set today's date as default
         function setDefaultDates() {
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('billDate').value = today;
             document.getElementById('cashDate').value = today;
         }
 
-        // Fetch all data
+        function fmt(n) { return 'LKR ' + Math.abs(Number(n) || 0).toLocaleString('en-LK', { minimumFractionDigits: 2 }); }
+
         async function loadDashboard() {
             try {
                 const token = localStorage.getItem('token');
                 const headers = { 'Authorization': `Bearer ${token}` };
-
                 const [billsRes, cashRes] = await Promise.all([
                     fetch(`${API_URL}/bills`, { headers }),
                     fetch(`${API_URL}/cash`, { headers })
                 ]);
-
-                if (billsRes.status === 401 || cashRes.status === 401) {
-                    localStorage.clear();
-                    window.location.href = 'login.html';
-                    return;
-                }
-
+                if (billsRes.status === 401 || cashRes.status === 401) { localStorage.clear(); window.location.href = 'login.html'; return; }
                 const bills = await billsRes.json();
                 const cash = await cashRes.json();
-
                 displayBills(bills.data || []);
                 displayCash(cash.data || []);
                 calculateStats(bills.data || [], cash.data || []);
-            } catch (error) {
-                console.error('Error loading dashboard:', error);
-            }
+                allBills = bills.data || [];
+                filterBills();
+            } catch (e) { console.error(e); }
+        }
+
+        function filterBills() {
+            const q = (document.getElementById('billSearch')?.value || '').toLowerCase();
+            const status = document.getElementById('billStatusFilter')?.value || 'all';
+            const filtered = allBills.filter(b => {
+                const matchText = b.name.toLowerCase().includes(q) || (b.category || '').toLowerCase().includes(q) || (b.description || '').toLowerCase().includes(q);
+                const matchStatus = status === 'all' || b.status === status;
+                return matchText && matchStatus;
+            });
+            displayBills(filtered);
         }
 
         function displayBills(bills) {
             const tbody = document.getElementById('billsTable');
-            if (bills.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-dim);">No bills added yet</td></tr>';
+            const mobileList = document.getElementById('bills-mobile-list');
+            document.getElementById('billCount').textContent = bills.length + ' bills';
+
+            if (!bills.length) {
+                const emptyMsg = '<tr><td colspan="6" style="text-align:center;color:var(--text-dim);padding:30px;">No bills found</td></tr>';
+                tbody.innerHTML = emptyMsg;
+                mobileList.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-dim);">No bills found</div>';
                 return;
             }
 
             tbody.innerHTML = bills.map(bill => `
-                <tr>
-                    <td>${bill.name}</td>
-                    <td>${bill.category}</td>
-                    <td class="amount negative">$${parseFloat(bill.amount).toFixed(2)}</td>
-                    <td>${new Date(bill.dueDate).toLocaleDateString()}</td>
-                    <td><span class="tag tag-${bill.status.toLowerCase()}">${bill.status}</span></td>
-                    <td class="action-buttons">
-                        <button class="btn btn-small btn-primary" onclick="editBill('${bill._id}')">Edit</button>
-                        <button class="btn btn-small btn-danger" onclick="deleteBill('${bill._id}')">Delete</button>
-                    </td>
-                </tr>
-            `).join('');
+              <tr>
+                <td><span style="font-weight:600;">${bill.name}</span><br><span style="font-size:0.72rem;color:var(--text-dim);">${bill.description || ''}</span></td>
+                <td>${bill.category}</td>
+                <td style="font-family:'JetBrains Mono',monospace;color:var(--orange);font-weight:600;">${fmt(bill.amount)}</td>
+                <td style="font-family:'JetBrains Mono',monospace;font-size:0.8rem;">${bill.billDate ? new Date(bill.billDate).toLocaleDateString() : '-'}</td>
+                <td><span class="tag tag-${bill.status.toLowerCase()}">${bill.status}</span></td>
+                <td style="text-align:right;">
+                  <button class="btn btn-small btn-success" onclick="toggleStatus('${bill._id}','${bill.status}')">
+                    ${bill.status === 'Paid' ? 'Mark Pending' : 'Mark Paid'}
+                  </button>
+                  <button class="btn btn-small btn-danger" onclick="deleteBill('${bill._id}')">Delete</button>
+                </td>
+              </tr>`).join('');
+
+            mobileList.innerHTML = bills.map(bill => `
+              <div class="mobile-card">
+                <div class="m-card-header">
+                  <span class="bold">${bill.name}</span>
+                  <span class="tag tag-${bill.status.toLowerCase()}">${bill.status}</span>
+                </div>
+                <div class="m-card-row"><span class="m-card-label">Category</span><span class="m-card-val">${bill.category}</span></div>
+                <div class="m-card-row"><span class="m-card-label">Amount</span><span class="m-card-val orange mono">${fmt(bill.amount)}</span></div>
+                <div class="m-card-row"><span class="m-card-label">Date</span><span class="m-card-val mono">${bill.billDate ? new Date(bill.billDate).toLocaleDateString() : '-'}</span></div>
+                <div class="m-card-footer">
+                   <button class="btn btn-small btn-success" onclick="toggleStatus('${bill._id}','${bill.status}')">${bill.status === 'Paid' ? 'Pending' : 'Mark Paid'}</button>
+                   <button class="btn btn-small btn-danger" onclick="deleteBill('${bill._id}')">🗑️</button>
+                </div>
+              </div>`).join('');
         }
 
         function displayCash(cash) {
             const tbody = document.getElementById('cashTable');
-            if (cash.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-dim);">No cash records yet</td></tr>';
+            document.getElementById('cashCount').textContent = cash.length + ' records';
+            if (!cash.length) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-dim);padding:30px;">No cash records yet</td></tr>';
                 return;
             }
-
-            tbody.innerHTML = cash.map(record => `
-                <tr>
-                    <td>${record.description}</td>
-                    <td class="amount positive">+$${parseFloat(record.amount).toFixed(2)}</td>
-                    <td>${new Date(record.date).toLocaleDateString()}</td>
-                    <td class="action-buttons">
-                        <button class="btn btn-small btn-danger" onclick="deleteCash('${record._id}')">Delete</button>
-                    </td>
-                </tr>
-            `).join('');
+            tbody.innerHTML = cash.map(r => `
+      <tr>
+        <td>${r.description}</td>
+        <td style="font-family:'JetBrains Mono',monospace;color:var(--green);font-weight:600;">+${fmt(r.amount)}</td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:0.8rem;">${new Date(r.date).toLocaleDateString()}</td>
+        <td><button class="btn btn-small btn-danger" onclick="deleteCash('${r._id}')">Delete</button></td>
+      </tr>`).join('');
         }
 
         function calculateStats(bills, cash) {
-            const totalCash = cash.reduce((sum, c) => sum + parseFloat(c.amount || 0), 0);
-            const totalBills = bills.reduce((sum, b) => sum + parseFloat(b.amount || 0), 0);
-            const paidBills = bills
-                .filter(b => b.status === 'Paid')
-                .reduce((sum, b) => sum + parseFloat(b.amount || 0), 0);
-            const pendingBills = totalBills - paidBills;
+            const totalCash = cash.reduce((s, c) => s + parseFloat(c.amount || 0), 0);
+            const totalBills = bills.reduce((s, b) => s + parseFloat(b.amount || 0), 0);
+            const pendingBills = bills.filter(b => b.status === 'Pending').reduce((s, b) => s + parseFloat(b.amount || 0), 0);
             const netBalance = totalCash - pendingBills;
-
-            document.getElementById('totalCash').textContent = '$' + totalCash.toFixed(2);
-            document.getElementById('totalBills').textContent = '$' + pendingBills.toFixed(2);
-            document.getElementById('totalLoans').textContent = '$' + totalBills.toFixed(2);
-            document.getElementById('netBalance').textContent = '$' + netBalance.toFixed(2);
+            document.getElementById('totalCash').textContent = fmt(totalCash);
+            document.getElementById('totalBills').textContent = fmt(pendingBills);
+            document.getElementById('totalLoans').textContent = fmt(totalBills);
+            document.getElementById('netBalance').textContent = fmt(netBalance);
+            document.getElementById('netBalance').style.color = netBalance >= 0 ? 'var(--green)' : 'var(--red)';
         }
 
-        async function handleAddBill(event) {
+        async function handleAddBill() {
             const loading = document.getElementById('addBillLoading');
             const error = document.getElementById('addBillError');
             error.classList.remove('show');
+            const name = document.getElementById('billName').value.trim();
+            const amount = document.getElementById('billAmount').value;
+            const billDate = document.getElementById('billDate').value;
+            const category = document.getElementById('billCategory').value;
+            if (!name || !amount || !billDate || !category) {
+                error.textContent = 'Please fill in all required fields.';
+                error.classList.add('show'); return;
+            }
             loading.classList.add('show');
-
-            const bill = {
-                name: document.getElementById('billName').value,
-                amount: parseFloat(document.getElementById('billAmount').value),
-                dueDate: document.getElementById('billDate').value,
-                category: document.getElementById('billCategory').value,
-                status: document.getElementById('billStatus').value,
-                description: document.getElementById('billDescription').value
-            };
-
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch(`${API_URL}/bills`, {
+                const res = await fetch(`${API_URL}/bills`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify(bill)
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ name, amount: parseFloat(amount), billDate, category, status: document.getElementById('billStatus').value, description: document.getElementById('billDescription').value })
                 });
-
-                const data = await response.json();
-
-                if (response.ok) {
+                const data = await res.json();
+                if (res.ok) {
                     document.getElementById('billName').value = '';
                     document.getElementById('billAmount').value = '';
                     document.getElementById('billDescription').value = '';
@@ -770,128 +1068,79 @@
                     error.textContent = data.message || 'Error adding bill';
                     error.classList.add('show');
                 }
-            } catch (err) {
-                error.textContent = 'Error adding bill';
-                error.classList.add('show');
-            } finally {
-                loading.classList.remove('show');
-            }
+            } catch { error.textContent = 'Server error'; error.classList.add('show'); }
+            finally { loading.classList.remove('show'); }
         }
 
-        async function handleAddCash(event) {
+        async function handleAddCash() {
             const loading = document.getElementById('addCashLoading');
             const error = document.getElementById('addCashError');
             error.classList.remove('show');
+            const amount = document.getElementById('cashAmount').value;
+            const date = document.getElementById('cashDate').value;
+            const description = document.getElementById('cashDescription').value.trim();
+            if (!amount || !date || !description) {
+                error.textContent = 'Please fill in all required fields.'; error.classList.add('show'); return;
+            }
             loading.classList.add('show');
-
-            const cash = {
-                amount: parseFloat(document.getElementById('cashAmount').value),
-                date: document.getElementById('cashDate').value,
-                description: document.getElementById('cashDescription').value
-            };
-
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch(`${API_URL}/cash`, {
+                const res = await fetch(`${API_URL}/cash`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify(cash)
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ amount: parseFloat(amount), date, description })
                 });
-
-                const data = await response.json();
-
-                if (response.ok) {
+                const data = await res.json();
+                if (res.ok) {
                     document.getElementById('cashAmount').value = '';
                     document.getElementById('cashDescription').value = '';
                     setDefaultDates();
                     loadDashboard();
                 } else {
-                    error.textContent = data.message || 'Error adding cash';
-                    error.classList.add('show');
+                    error.textContent = data.message || 'Error adding cash'; error.classList.add('show');
                 }
-            } catch (err) {
-                error.textContent = 'Error adding cash';
-                error.classList.add('show');
-            } finally {
-                loading.classList.remove('show');
-            }
+            } catch { error.textContent = 'Server error'; error.classList.add('show'); }
+            finally { loading.classList.remove('show'); }
+        }
+
+        async function toggleStatus(id, currentStatus) {
+            const token = localStorage.getItem('token');
+            const newStatus = currentStatus === 'Paid' ? 'Pending' : 'Paid';
+            await fetch(`${API_URL}/bills/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ status: newStatus })
+            });
+            loadDashboard();
         }
 
         async function deleteBill(id) {
-            if (!confirm('Are you sure you want to delete this bill?')) return;
-
-            try {
-                const token = localStorage.getItem('token');
-                const response = await fetch(`${API_URL}/bills/${id}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
-                if (response.ok) {
-                    loadDashboard();
-                } else {
-                    alert('Error deleting bill');
-                }
-            } catch (err) {
-                alert('Error deleting bill');
-            }
+            if (!confirm('Delete this bill?')) return;
+            const token = localStorage.getItem('token');
+            await fetch(`${API_URL}/bills/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
+            loadDashboard();
         }
 
         async function deleteCash(id) {
-            if (!confirm('Are you sure you want to delete this cash record?')) return;
-
-            try {
-                const token = localStorage.getItem('token');
-                const response = await fetch(`${API_URL}/cash/${id}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
-                if (response.ok) {
-                    loadDashboard();
-                } else {
-                    alert('Error deleting cash record');
-                }
-            } catch (err) {
-                alert('Error deleting cash record');
-            }
-        }
-
-        function editBill(id) {
-            alert('Edit feature coming soon!');
+            if (!confirm('Delete this cash record?')) return;
+            const token = localStorage.getItem('token');
+            await fetch(`${API_URL}/cash/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
+            loadDashboard();
         }
 
         function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                localStorage.clear();
-                window.location.href = 'login.html';
-            }
+            if (confirm('Logout?')) { localStorage.clear(); window.location.href = 'login.html'; }
         }
 
-        // Initialize
+        document.getElementById('userModalClose').onclick = () => document.getElementById('userModalOverlay').classList.remove('open');
+        document.getElementById('userModalOverlay').onclick = function (e) { if (e.target === this) this.classList.remove('open'); };
+
         checkAuth();
         loadUserData();
         setDefaultDates();
         loadDashboard();
-        setInterval(loadDashboard, 30000); // Refresh every 30 seconds
-        // User button event
-        document.getElementById('userBtn').onclick = openUserModal;
-        document.getElementById('userModalClose').onclick = closeUserModal;
-        document.getElementById('userModalOverlay').onclick = function(e) { if (e.target === this) closeUserModal(); };
+        setInterval(loadDashboard, 30000);
     </script>
-</div>
-<!-- User Modal -->
-<div class="user-modal-overlay" id="userModalOverlay">
-    <div class="user-modal">
-        <button class="close-btn" id="userModalClose">&times;</button>
-        <div class="user-modal-title">Account Details</div>
-        <div class="user-modal-row"><b>Name:</b> <span id="userModalName">-</span></div>
-        <div class="user-modal-row"><b>Email:</b> <span id="userModalEmail">-</span></div>
-        <div class="user-modal-row"><b>Joined:</b> <span id="userModalCreated">-</span></div>
-    </div>
-</div>
 </body>
+
 </html>
